@@ -100,7 +100,7 @@ export function App() {
           {activeTab === 'dashboard' && <CommandCenter setActiveTab={setActiveTab} />}
           {activeTab === 'copilot' && <AICopilotWorkspace setActiveTab={setActiveTab} />}
           {activeTab === 'agents' && <MultiAgentHub setActiveTab={setActiveTab} />}
-          {activeTab === 'graph' && <EnterpriseKnowledgeGraph />}
+          {activeTab === 'graph' && <EnterpriseKnowledgeGraph setActiveTab={setActiveTab} />}
           {activeTab === 'simulator' && <DigitalTwinSimulator />}
           {activeTab === 'predictions' && <PredictionsRootCause />}
           {activeTab === 'departments' && <DepartmentHub setActiveTab={setActiveTab} />}
