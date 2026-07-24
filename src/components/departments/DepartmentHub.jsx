@@ -131,7 +131,15 @@ export const DepartmentHub = ({ setActiveTab }) => {
                 </div>
               </div>
 
-              <div className="pt-3 flex justify-end">
+              <div className="pt-3 flex items-center justify-between">
+                <button
+                  onClick={() => setActiveTab('agents')}
+                  className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-colors flex items-center gap-1.5"
+                >
+                  <Brain className="w-3.5 h-3.5" />
+                  <span>Launch {assignedAgent.name} Working Console</span>
+                </button>
+
                 <button
                   onClick={() => setActiveTab('copilot')}
                   className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors flex items-center gap-1.5"
@@ -140,6 +148,7 @@ export const DepartmentHub = ({ setActiveTab }) => {
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
+
             </div>
           </div>
         </div>

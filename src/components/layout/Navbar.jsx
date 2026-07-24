@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Brain, 
   ShieldAlert, 
@@ -13,7 +13,7 @@ import {
   X,
   LogOut
 } from 'lucide-react';
-import { ENTERPRISE_METRICS } from '../../data/mockEnterpriseData';
+import { telemetryStream } from '../../services/telemetryStreamService';
 import { HelpTooltip } from '../common/HelpTooltip';
 
 export const Navbar = ({ 
@@ -26,9 +26,17 @@ export const Navbar = ({
   currentUser,
   onLogout
 }) => {
+  const [telemetry, setTelemetry] = useState(telemetryStream.state);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [selectedRole, setSelectedRole] = useState(currentUser?.role || 'Chief Operating Officer (Executive)');
+
+  useEffect(() => {
+    const unsubscribe = telemetryStream.subscribe((newState) => {
+      setTelemetry({ ...newState });
+    });
+    return unsubscribe;
+  }, []);
 
   return (
     <header className="h-16 border-b border-black/10 bg-white sticky top-0 z-40 px-4 md:px-6 flex items-center justify-between shadow-sm shadow-black/5">
@@ -59,17 +67,16 @@ export const Navbar = ({
           </div>
         </div>
 
-        {/* Global Enterprise Health Badge with Tooltip */}
+        {/* Global Enterprise Health Badge with Dynamic Telemetry */}
         <div className="hidden lg:flex items-center gap-2 ml-6 px-3 py-1.5 rounded-full bg-red-50 border border-black/10">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-red-700 animate-ping" />
             <span className="text-xs text-slate-600">Enterprise Health:</span>
-            <span className="text-xs font-bold text-red-700">{ENTERPRISE_METRICS.healthScore}/100</span>
+            <span className="text-xs font-bold text-red-700 font-mono">{telemetry.enterpriseHealth}/100</span>
           </div>
           <HelpTooltip 
             title="Enterprise Health Score"
             explanation="A composite metric (0-100) calculated continuously across inventory, production SLAs, financial margin stability, and supplier reliability."
-            example="92/100 means operations are running smoothly with low risk of downtime."
           />
         </div>
       </div>
@@ -77,10 +84,12 @@ export const Navbar = ({
       {/* Live Risk Alert Ticker */}
       <div className="hidden md:flex items-center gap-2 max-w-md bg-red-50 border border-black/10 rounded-full px-3.5 py-1 text-xs text-red-700">
         <ShieldAlert className="w-4 h-4 text-red-700 shrink-0 animate-bounce" />
-        <span className="truncate font-medium">Alert: CNC Unit #4 Spindle & Microchip Stock</span>
+        <span className="truncate font-medium">
+          {telemetry.recentEvent ? telemetry.recentEvent.title : 'Alert: CNC Unit #4 Spindle & Microchip Stock'}
+        </span>
         <button 
           onClick={() => setActiveTab('predictions')} 
-          className="underline font-bold text-red-700 hover:text-red-900 shrink-0"
+          className="underline font-bold text-red-700 hover:text-red-900 shrink-0 cursor-pointer"
           title="Click to view root cause analysis"
         >
           View Solution
@@ -118,7 +127,7 @@ export const Navbar = ({
             title="View live AI alerts"
           >
             <Bell className="w-4 h-4 text-red-700" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-700 text-[10px] font-bold text-white flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-700 text-[10px] font-bold text-white flex items-center justify-center font-mono">
               4
             </span>
           </button>
@@ -135,7 +144,7 @@ export const Navbar = ({
                   className="p-2 rounded-lg bg-slate-50 border border-black/10 hover:bg-slate-100 cursor-pointer"
                 >
                   <div className="font-semibold text-slate-900">Production Machine #4 Warning</div>
-                  <p className="text-slate-700 mt-0.5">Vibration score 8.4mm/s. 84% failure probability within 72 hrs.</p>
+                  <p className="text-slate-700 mt-0.5">Vibration score {telemetry.cncVibration} mm/s (Threshold: 6.0 mm/s).</p>
                   <span className="text-[10px] text-red-700 mt-1 block">Click to view fix →</span>
                 </div>
                 <div 
@@ -143,7 +152,7 @@ export const Navbar = ({
                   className="p-2 rounded-lg bg-slate-50 border border-black/10 hover:bg-slate-100 cursor-pointer"
                 >
                   <div className="font-semibold text-slate-900">Microchip X402 Depletion Alert</div>
-                  <p className="text-slate-600 mt-0.5">Only 120 units remaining in Warehouse West-3.</p>
+                  <p className="text-slate-600 mt-0.5">Only {telemetry.microchipStock} units remaining in Warehouse West-3.</p>
                   <span className="text-[10px] text-red-700 mt-1 block">Click to approve purchase order →</span>
                 </div>
               </div>
@@ -157,7 +166,7 @@ export const Navbar = ({
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="flex items-center gap-2 p-1.5 rounded-lg bg-white border border-black/10 hover:border-black/20 transition-colors"
           >
-            <div className="w-7 h-7 rounded-full bg-red-50 flex items-center justify-center text-red-700 font-bold text-xs">
+            <div className="w-7 h-7 rounded-full bg-red-50 flex items-center justify-center text-red-700 font-bold text-xs font-mono">
               {currentUser?.avatar || 'AD'}
             </div>
             <div className="hidden sm:block text-left">
@@ -206,3 +215,5 @@ export const Navbar = ({
     </header>
   );
 };
+
+export default Navbar;

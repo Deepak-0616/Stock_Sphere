@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  ENTERPRISE_METRICS, 
   DEPARTMENTS, 
   RECENT_DECISIONS_LOG,
   AI_AGENTS 
 } from '../../data/mockEnterpriseData';
+import { telemetryStream } from '../../services/telemetryStreamService';
+import { LiveTelemetryControlBanner } from '../common/LiveTelemetryControlBanner';
 import { 
   Activity, 
   TrendingUp, 
@@ -26,25 +27,35 @@ import {
   Sparkles
 } from 'lucide-react';
 import { 
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid 
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid 
 } from 'recharts';
 import { HelpTooltip } from '../common/HelpTooltip';
 import { OnboardingBanner } from '../common/OnboardingBanner';
 
-const chartData = [
-  { time: '08:00', revenue: 32.4, riskIndex: 18, efficiency: 88 },
-  { time: '10:00', revenue: 35.8, riskIndex: 22, efficiency: 91 },
-  { time: '12:00', revenue: 38.2, riskIndex: 28, efficiency: 85 },
-  { time: '14:00', revenue: 40.5, riskIndex: 24, efficiency: 89 },
-  { time: '16:00', revenue: 42.8, riskIndex: 21, efficiency: 92 },
-  { time: '18:00', revenue: 44.1, riskIndex: 21, efficiency: 94 }
-];
-
 export const CommandCenter = ({ setActiveTab }) => {
+  const [telemetry, setTelemetry] = useState(telemetryStream.state);
+
+  useEffect(() => {
+    const unsubscribe = telemetryStream.subscribe((newState) => {
+      setTelemetry({ ...newState });
+    });
+    return unsubscribe;
+  }, []);
+
+  const formatCurrency = (val) => {
+    if (val >= 10000000) {
+      return `₹${(val / 10000000).toFixed(2)} Cr`;
+    }
+    return `₹${(val / 100000).toFixed(2)} L`;
+  };
+
   return (
     <div className="space-y-6 pb-12">
       {/* User Onboarding & Quick Guide Banner */}
       <OnboardingBanner setActiveTab={setActiveTab} />
+
+      {/* Live Synthetic Telemetry Stream Control Banner */}
+      <LiveTelemetryControlBanner />
 
       {/* Top Banner: Enterprise OS Health Header */}
       <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 relative overflow-hidden">
@@ -53,82 +64,78 @@ export const CommandCenter = ({ setActiveTab }) => {
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-semibold text-blue-400">
-              <Zap className="w-3.5 h-3.5" /> SolveX Autonomous Intelligence Online
+              <Zap className="w-3.5 h-3.5" /> SolveX Autonomous Intelligence Stream Online
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
               Enterprise Command Center
             </h1>
             <p className="text-xs md:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              10 specialized AI Agents continuously monitor your business, detect risks before they cost money, and provide one-click executive approvals.
+              10 specialized AI Agents continuously monitor live enterprise telemetry, detect operational risks before they cause downtime, and output one-click executive actions.
             </p>
           </div>
 
-          {/* Key Metrics Strip with Tooltips */}
+          {/* Dynamic Key Metrics Strip */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
-            {/* Metric 1 */}
+            {/* Metric 1: Annual Revenue */}
             <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] uppercase font-bold text-slate-400">Annual Revenue</span>
                 <HelpTooltip 
                   title="Annual Recurring Revenue (ARR)" 
                   explanation="Current total normalized yearly revenue across all sales channels."
-                  example="₹42.8 Cr is trending up by +14.2% YoY."
                 />
               </div>
-              <div className="text-base font-extrabold text-white">{ENTERPRISE_METRICS.revenue}</div>
-              <div className="text-[10px] font-semibold text-emerald-400 flex items-center gap-0.5">
-                <ArrowUpRight className="w-3 h-3" /> {ENTERPRISE_METRICS.revenueGrowth} YoY
+              <div className="text-base font-extrabold text-white font-mono">{formatCurrency(telemetry.annualRevenue)}</div>
+              <div className="text-[10px] font-semibold text-emerald-400 flex items-center gap-0.5 font-mono">
+                <ArrowUpRight className="w-3 h-3" /> +{telemetry.annualRevenueGrowth}% YoY
               </div>
             </div>
 
-            {/* Metric 2 */}
+            {/* Metric 2: Net Profit Margin */}
             <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] uppercase font-bold text-slate-400">Net Profit</span>
                 <HelpTooltip 
                   title="Net Profit Margin" 
-                  explanation="The percentage of revenue retained as profit after all production, logistics, and operational costs."
-                  example="24.6% margin with +3.8% growth due to automated cost savings."
+                  explanation="Percentage of revenue retained after all operational costs."
                 />
               </div>
-              <div className="text-base font-extrabold text-white">{ENTERPRISE_METRICS.profitMargin}</div>
-              <div className="text-[10px] font-semibold text-emerald-400 flex items-center gap-0.5">
-                <ArrowUpRight className="w-3 h-3" /> {ENTERPRISE_METRICS.profitGrowth} margin
+              <div className="text-base font-extrabold text-white font-mono">{telemetry.netProfitMargin}%</div>
+              <div className="text-[10px] font-semibold text-emerald-400 flex items-center gap-0.5 font-mono">
+                <ArrowUpRight className="w-3 h-3" /> +2.1% margin
               </div>
             </div>
 
-            {/* Metric 3 */}
+            {/* Metric 3: Monthly AI Savings */}
             <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] uppercase font-bold text-slate-400">Monthly AI Savings</span>
                 <HelpTooltip 
                   title="Monthly AI Cost Prevention" 
-                  explanation="Direct financial savings captured by automated AI actions (preventing delayed shipments, avoiding machine breakdowns, early payment discounts)."
-                  example="₹18,40,000 saved this month across 1,420 automated ops."
+                  explanation="Direct financial savings captured by automated AI agent actions."
                 />
               </div>
-              <div className="text-base font-extrabold text-blue-400">{ENTERPRISE_METRICS.costSavedThisMonth}</div>
-              <div className="text-[10px] text-slate-400">{ENTERPRISE_METRICS.automatedActionsToday} automated ops</div>
+              <div className="text-base font-extrabold text-blue-400 font-mono">{formatCurrency(telemetry.aiSavingsMonthly)}</div>
+              <div className="text-[10px] text-slate-400 font-mono">{telemetry.aiSavingsCount} automated ops</div>
             </div>
 
-            {/* Metric 4 */}
+            {/* Metric 4: AI Confidence */}
             <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] uppercase font-bold text-slate-400">AI Confidence</span>
                 <HelpTooltip 
                   title="AI Decision Confidence" 
-                  explanation="The statistical reliability score calculated from knowledge graph validation and past outcome data."
-                  example="96.4% confidence means high precision decisions with zero hallucinations."
+                  explanation="Statistical reliability score calculated across knowledge graph nodes."
                 />
               </div>
-              <div className="text-base font-extrabold text-purple-400">{ENTERPRISE_METRICS.decisionConfidenceAvg}</div>
+              <div className="text-base font-extrabold text-purple-400 font-mono">{telemetry.aiConfidence}%</div>
               <div className="text-[10px] font-semibold text-emerald-400">Verified Precision</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Grid: Telemetry & Live Multi-Agent Debate */}
+      {/* Main Grid: Live Telemetry Graph & Department Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Enterprise Telemetry & Department Cards */}
         <div className="lg:col-span-2 space-y-6">
@@ -137,17 +144,17 @@ export const CommandCenter = ({ setActiveTab }) => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-sm text-white flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-blue-400" />
-                  Real-time Revenue & Efficiency Telemetry
+                  <Activity className="w-4 h-4 text-blue-400 animate-pulse" />
+                  Real-Time Revenue & Efficiency Telemetry Stream
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Synchronized hourly metrics across all 10 departments
+                  Live synchronized metrics across all 10 departments (Last Tick: {telemetry.lastTickTime})
                 </p>
               </div>
 
               <div className="flex items-center gap-3 text-xs">
                 <span className="flex items-center gap-1.5 text-slate-300 font-medium">
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" /> Revenue (Cr)
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" /> Revenue Vector
                 </span>
                 <span className="flex items-center gap-1.5 text-slate-300 font-medium">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> Efficiency Score
@@ -157,7 +164,7 @@ export const CommandCenter = ({ setActiveTab }) => {
 
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
+                <AreaChart data={telemetry.telemetryHistory}>
                   <defs>
                     <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
@@ -201,65 +208,70 @@ export const CommandCenter = ({ setActiveTab }) => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {DEPARTMENTS.slice(0, 4).map((dept) => {
-                return (
-                  <div 
-                    key={dept.id}
-                    onClick={() => setActiveTab('departments')}
-                    className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-blue-500/40 transition-all cursor-pointer group"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="font-bold text-sm text-white group-hover:text-blue-400 transition-colors">{dept.name}</div>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold font-mono ${
-                        dept.health > 90 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                      }`}>
-                        {dept.health}% Health
-                      </span>
-                    </div>
+              {DEPARTMENTS.slice(0, 4).map((dept) => (
+                <div 
+                  key={dept.id}
+                  onClick={() => setActiveTab('departments')}
+                  className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-blue-500/40 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="font-bold text-sm text-white group-hover:text-blue-400 transition-colors">{dept.name}</div>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold font-mono ${
+                      dept.health > 90 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                    }`}>
+                      {dept.health}% Health
+                    </span>
+                  </div>
 
-                    <div className="space-y-1.5 text-xs text-slate-300">
-                      <div className="flex items-center justify-between text-slate-400">
-                        <span>Assigned Agent:</span>
-                        <span className="font-semibold text-slate-200">{dept.agent}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-slate-400">
-                        <span>Key Metric:</span>
-                        <span className="font-semibold text-blue-400">{dept.keyMetric}</span>
-                      </div>
+                  <div className="space-y-1.5 text-xs text-slate-300">
+                    <div className="flex items-center justify-between text-slate-400">
+                      <span>Assigned Agent:</span>
+                      <span className="font-semibold text-slate-200">{dept.agent}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-400">
+                      <span>Key Metric:</span>
+                      <span className="font-semibold text-blue-400">{dept.keyMetric}</span>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Right Col: High Priority AI Recommendations & Recent Decisions */}
+        {/* Right Col: High Priority AI Recommendations & Dynamic Injected Event Alert */}
         <div className="space-y-6">
           {/* Priority AI Recommendation Card */}
           <div className="p-5 rounded-2xl bg-gradient-to-b from-indigo-950/60 to-slate-900 border border-indigo-500/30 shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold">
-                <AlertTriangle className="w-3.5 h-3.5" /> Action Required • Microchip Shortage
+                <AlertTriangle className="w-3.5 h-3.5" /> 
+                {telemetry.recentEvent ? telemetry.recentEvent.title : 'Action Required • Stock Deficit'}
               </span>
-              <span className="text-[10px] font-mono text-slate-400">AI Confidence: 94%</span>
+              <span className="text-[10px] font-mono text-slate-400">Confidence: {telemetry.aiConfidence}%</span>
             </div>
 
             <div>
-              <h4 className="font-bold text-base text-white">Approve Microchip X402 Emergency Procurement</h4>
+              <h4 className="font-bold text-base text-white">
+                {telemetry.recentEvent ? telemetry.recentEvent.title : 'Approve Microchip X402 Emergency Procurement'}
+              </h4>
               <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                Supplier Alpha is delayed by 5 days. Inventory & Logistics Agents recommend procuring from Supplier Beta via express air-freight.
+                {telemetry.recentEvent ? telemetry.recentEvent.impact : `Current stock: ${telemetry.microchipStock} units. Inventory & Logistics Agents recommend procuring from Supplier Beta via express air-freight.`}
               </p>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-400">Direct Saving:</span>
-                <span className="font-bold text-emerald-400">+₹8,50,000 Saved</span>
+                <span className="text-slate-400">CNC Spindle Vibration:</span>
+                <span className={`font-bold font-mono ${telemetry.cncVibration > 6.0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                  {telemetry.cncVibration} mm/s
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Delivery Latency:</span>
-                <span className="font-bold text-blue-400">&lt; 24 Hours</span>
+                <span className="text-slate-400">Microchip X402 Stock:</span>
+                <span className={`font-bold font-mono ${telemetry.microchipStock < 100 ? 'text-rose-400' : 'text-blue-400'}`}>
+                  {telemetry.microchipStock} Units
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">Protected Customer Order:</span>
@@ -270,7 +282,7 @@ export const CommandCenter = ({ setActiveTab }) => {
             <div className="space-y-2 pt-1">
               <button 
                 onClick={() => setActiveTab('automation')}
-                className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" /> Approve Execution in 1 Click
               </button>
@@ -325,3 +337,5 @@ export const CommandCenter = ({ setActiveTab }) => {
     </div>
   );
 };
+
+export default CommandCenter;
