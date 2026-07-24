@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { 
-  Bot, 
   Send, 
   ArrowRight, 
-  Loader2
+  Loader2, 
+  ShieldAlert, 
+  Key, 
+  X, 
+  AlertTriangle,
+  Sparkles,
+  Info,
+  ShieldCheck
 } from 'lucide-react';
 import { StockSphereLogo } from '../common/StockSphereLogo';
+import { AIService } from '../../services/aiService';
 import { 
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer 
 } from 'recharts';
@@ -21,23 +28,50 @@ const mockSalesData = [
 export const AICopilotWorkspace = ({ setActiveTab }) => {
   const [inputQuery, setInputQuery] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [apiKey, setApiKey] = useState(() => AIService.getApiKey());
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [tempApiKey, setTempApiKey] = useState('');
+  const [activeProvider, setActiveProvider] = useState(() => apiKey ? 'Google Gemini AI' : 'StockSphere Domain AI');
+
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: 'ai',
-      text: "Hello Alex. I am your StockSphere Enterprise AI Copilot. I have synchronized real-time data across all 10 departments. What would you like to analyze or execute today?",
-      timestamp: '10:14 AM',
+      text: "Hello! I am the StockSphere Real Enterprise AI Copilot. I have direct access to live telemetry, 10 department agents, and knowledge graphs.\n\n🔒 **Domain Guardrail Active**: I can answer any question related to StockSphere, supply chain, inventory, manufacturing, logistics, and enterprise finance. Outer questions outside this domain are restricted.",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      provider: apiKey ? 'Google Gemini AI' : 'StockSphere Domain AI',
       quickPrompts: [
-        'Why is CNC Unit #4 at risk of breakdown?',
-        'Simulate Q3 Profit Margins if Microchip procurement is delayed',
-        'Show me top 3 cost optimization opportunities'
+        { label: 'Why is CNC Unit #4 at risk of breakdown?', type: 'valid' },
+        { label: 'Simulate Q3 Profit Margins if Microchip procurement is delayed', type: 'valid' },
+        { label: 'Show Microchip X402 inventory & supplier bottleneck status', type: 'valid' },
+        { label: '🚫 How to bake a chocolate cake? (Test Restriction)', type: 'invalid' },
+        { label: '🚫 Who won the 2022 World Cup? (Test Restriction)', type: 'invalid' }
       ]
     }
   ]);
 
-  const handleSend = (textToSend) => {
-    const query = textToSend || inputQuery;
-    if (!query.trim()) return;
+  const handleSaveApiKey = (e) => {
+    e.preventDefault();
+    AIService.setApiKey(tempApiKey);
+    setApiKey(tempApiKey.trim());
+    setActiveProvider(tempApiKey.trim() ? 'Google Gemini AI' : 'StockSphere Domain AI');
+    setShowApiKeyModal(false);
+  };
+
+  const handleClearApiKey = () => {
+    AIService.clearApiKey();
+    setApiKey('');
+    setTempApiKey('');
+    setActiveProvider('StockSphere Domain AI');
+    setShowApiKeyModal(false);
+  };
+
+  const handleSend = async (textToSend) => {
+    const rawQuery = textToSend || inputQuery;
+    if (!rawQuery.trim()) return;
+
+    // Clean prompt label if test prompt
+    const query = rawQuery.replace('🚫 ', '').replace(' (Test Restriction)', '');
 
     const userMsg = {
       id: Date.now(),
@@ -50,54 +84,94 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
     if (!textToSend) setInputQuery('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      let replyText = "Analyzing enterprise knowledge graph across Inventory, Finance, and Production...";
-      let hasChart = false;
-      let hasActions = false;
-
-      if (query.toLowerCase().includes('cnc') || query.toLowerCase().includes('breakdown')) {
-        replyText = "🔍 **Root Cause Diagnostics for CNC Unit #4:**\n• Spindle vibration reached 8.4mm/s (safety threshold 5.0mm/s).\n• Bearing friction score is elevated by +42% due to missed lubrication cycle #402.\n• AI Recommendation: Trigger automated work order #849 to replace spindle bearing before Saturday shift to avoid ₹14,50,000 in unscheduled downtime.";
-        hasActions = true;
-      } else if (query.toLowerCase().includes('q3') || query.toLowerCase().includes('simulate') || query.toLowerCase().includes('profit')) {
-        replyText = "📊 **Q3 Financial Risk & Margin Simulation:**\n• If Microchip X402 procurement from Supplier Alpha is delayed by 5 days, Q3 revenue drops by -₹42,00,000.\n• Switching to Supplier Beta via Air-Freight retains 98.4% of expected net profit.\n• Simulated ROI: +310% on freight acceleration cost.";
-        hasChart = true;
-      } else {
-        replyText = `Understood. Analyzing "${query}" across 50+ knowledge graph nodes. Autonomous agents recommend reviewing active automation queues to prevent delivery SLA penalties.`;
-      }
+    try {
+      const response = await AIService.queryAI(query);
 
       const aiMsg = {
         id: Date.now() + 1,
         sender: 'ai',
-        text: replyText,
+        text: response.text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        hasChart,
-        hasActions
+        hasChart: response.hasChart,
+        hasActions: response.hasActions,
+        isRestricted: response.isRestricted,
+        provider: response.provider || activeProvider
       };
 
       setMessages(prev => [...prev, aiMsg]);
+    } catch (err) {
+      console.error(err);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          sender: 'ai',
+          text: "⚠️ An error occurred while communicating with the AI service. Please check your API key connection or try again.",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isRestricted: false,
+          provider: 'System Error'
+        }
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1200);
+    }
   };
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Header */}
-      <div className="p-6 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E] flex items-center justify-between">
+      {/* Header with AI Engine & Guardrail Badge */}
+      <div className="p-6 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#059669]/15 border border-[#059669]/40 text-xs font-semibold text-[#10B981] mb-2">
-            <Bot className="w-3.5 h-3.5" /> ChatGPT + SAP Copilot Hybrid Interface
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#059669]/15 border border-[#059669]/40 text-xs font-semibold text-[#10B981]">
+              <Sparkles className="w-3.5 h-3.5" /> 
+              <span>{apiKey ? 'Real AI Engine: Gemini 2.5 Flash' : 'Real AI Engine: StockSphere Domain RAG'}</span>
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3B82F6]/15 border border-[#3B82F6]/40 text-xs font-semibold text-[#60A5FA]">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Domain Access Policy: STRICT RESTRICTION</span>
+            </div>
           </div>
-          <h1 className="text-2xl font-extrabold text-[#FAFAFA] tracking-tight">AI Business Copilot</h1>
+
+          <h1 className="text-2xl font-extrabold text-[#FAFAFA] tracking-tight flex items-center gap-2">
+            StockSphere Real AI Copilot
+          </h1>
           <p className="text-xs text-[#A3A3A3] mt-1">
-            Natural language executive queries backed by real-time enterprise telemetry, knowledge graphs, and predictive math models.
+            Answers any project & domain question using real-time enterprise telemetry. Restricts off-topic / outer requests.
+          </p>
+        </div>
+
+        {/* API Key Configure Button */}
+        <button
+          onClick={() => {
+            setTempApiKey(apiKey);
+            setShowApiKeyModal(true);
+          }}
+          className="px-4 py-2.5 rounded-xl bg-[#262626] hover:bg-[#333333] border border-[#333333] text-xs font-medium text-[#FAFAFA] transition-all flex items-center gap-2 shrink-0 cursor-pointer"
+        >
+          <Key className="w-4 h-4 text-[#10B981]" />
+          <span>{apiKey ? 'Configured (Gemini Key)' : 'Configure Gemini API Key'}</span>
+        </button>
+      </div>
+
+      {/* Domain Scope Info Banner */}
+      <div className="p-4 rounded-xl bg-[#0D1B1E] border border-[#059669]/30 flex items-start gap-3 text-xs">
+        <Info className="w-4 h-4 text-[#10B981] shrink-0 mt-0.5" />
+        <div className="text-[#A3A3A3] space-y-1">
+          <p className="text-[#FAFAFA] font-semibold">
+            🛡️ Smart Domain Guardrails Active
+          </p>
+          <p>
+            This AI is configured to assist <strong>strictly with StockSphere domain operations</strong> (Inventory, CNC telemetry, Supply Chain, Logistics, Finance, Department Agents). Off-topic questions (e.g. recipes, sports, random trivia) will be blocked gracefully.
           </p>
         </div>
       </div>
 
-      {/* Chat Container */}
-      <div className="p-6 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E] space-y-6 min-h-[500px] flex flex-col justify-between">
+      {/* Main Chat Container */}
+      <div className="p-6 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E] space-y-6 min-h-[520px] flex flex-col justify-between">
         {/* Messages Feed */}
-        <div className="space-y-4 max-h-[520px] overflow-y-auto pr-2">
+        <div className="space-y-5 max-h-[540px] overflow-y-auto pr-2">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -106,37 +180,62 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
               }`}
             >
               {msg.sender === 'ai' && (
-                <div className="w-8 h-8 rounded-xl bg-[#059669] flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-950/40">
-                  <StockSphereLogo className="w-5 h-5" color="#FAFAFA" />
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg ${
+                  msg.isRestricted ? 'bg-amber-600 shadow-amber-950/40' : 'bg-[#059669] shadow-emerald-950/40'
+                }`}>
+                  {msg.isRestricted ? <ShieldAlert className="w-5 h-5 text-white" /> : <StockSphereLogo className="w-5 h-5" color="#FAFAFA" />}
                 </div>
               )}
 
-              <div className={`max-w-xl p-4 rounded-2xl space-y-3 ${
+              <div className={`max-w-2xl p-4 rounded-2xl space-y-3 ${
                 msg.sender === 'user'
                   ? 'bg-[#059669] text-[#FAFAFA] rounded-tr-none'
-                  : 'bg-[#0A0A0A] border border-[#2E2E2E] text-[#FAFAFA] rounded-tl-none'
+                  : msg.isRestricted
+                    ? 'bg-[#1C1917] border border-amber-500/40 text-[#FAFAFA] rounded-tl-none shadow-lg'
+                    : 'bg-[#0A0A0A] border border-[#2E2E2E] text-[#FAFAFA] rounded-tl-none'
               }`}>
-                <div className="flex items-center justify-between text-[10px] opacity-70 pb-1 border-b border-white/10">
-                  <span>{msg.sender === 'user' ? 'You (Alex Drake)' : 'StockSphere AI Copilot'}</span>
+                <div className="flex items-center justify-between text-[10px] opacity-70 pb-1.5 border-b border-white/10">
+                  <span className="font-semibold flex items-center gap-1.5">
+                    {msg.sender === 'user' ? 'You' : 'StockSphere AI'}
+                    {msg.sender === 'ai' && (
+                      <span className="px-1.5 py-0.5 rounded bg-white/10 text-[9px] font-mono">
+                        {msg.provider}
+                      </span>
+                    )}
+                  </span>
                   <span className="font-mono">{msg.timestamp}</span>
                 </div>
 
-                <p className="whitespace-pre-line leading-relaxed font-sans">
+                {/* Restricted Query Warning Badge */}
+                {msg.isRestricted && (
+                  <div className="px-3 py-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[11px] font-medium flex items-center gap-2">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                    <span>Domain Restriction Triggered: Outer Question Blocked</span>
+                  </div>
+                )}
+
+                <div className="whitespace-pre-line leading-relaxed font-sans text-xs">
                   {msg.text}
-                </p>
+                </div>
 
                 {/* Quick Prompts Panel */}
                 {msg.quickPrompts && (
-                  <div className="space-y-1.5 pt-2">
-                    <span className="text-[10px] text-[#A3A3A3] uppercase font-bold">Suggested Executive Queries:</span>
+                  <div className="space-y-2 pt-2 border-t border-white/10">
+                    <span className="text-[10px] text-[#A3A3A3] uppercase font-bold tracking-wider">
+                      Try Sample Queries (Valid Domain vs Restricted Outer):
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
                       {msg.quickPrompts.map((prompt, i) => (
                         <button
                           key={i}
-                          onClick={() => handleSend(prompt)}
-                          className="px-2.5 py-1 rounded-lg bg-[#1A1A1A] hover:bg-[#059669]/20 text-[#A3A3A3] hover:text-[#10B981] border border-[#2E2E2E] text-[11px] transition-colors cursor-pointer"
+                          onClick={() => handleSend(prompt.label)}
+                          className={`px-3 py-1.5 rounded-lg border text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                            prompt.type === 'invalid'
+                              ? 'bg-amber-950/30 hover:bg-amber-900/40 text-amber-300 border-amber-700/50'
+                              : 'bg-[#1A1A1A] hover:bg-[#059669]/20 text-[#A3A3A3] hover:text-[#10B981] border-[#2E2E2E]'
+                          }`}
                         >
-                          {prompt}
+                          {prompt.label}
                         </button>
                       ))}
                     </div>
@@ -147,7 +246,7 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
                 {msg.hasChart && (
                   <div className="p-3 rounded-xl bg-[#1A1A1A] border border-[#2E2E2E] space-y-2 mt-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-[#10B981] uppercase font-mono">Q3 Sales Forecast Model</span>
+                      <span className="text-[10px] font-bold text-[#10B981] uppercase font-mono">Q3 Sales & Profit Forecast Model</span>
                       <span className="text-[10px] text-[#A3A3A3]">+24.1 Cr Projected</span>
                     </div>
                     <div className="h-36 w-full">
@@ -191,32 +290,109 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
               </div>
               <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#0A0A0A] border border-[#2E2E2E]">
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-[#059669]" />
-                <span>Copilot is inspecting 50+ knowledge graph nodes...</span>
+                <span>Evaluating domain scope & querying Real AI...</span>
               </div>
             </div>
           )}
         </div>
 
         {/* Input Controls */}
-        <div className="flex items-center gap-2 pt-4 border-t border-[#2E2E2E]">
-          <input
-            type="text"
-            value={inputQuery}
-            onChange={(e) => setInputQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Ask Copilot anything (e.g. 'What is the risk score for Q3 sales?')"
-            className="flex-1 px-4 py-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] text-xs text-[#FAFAFA] placeholder-[#A3A3A3]/60 focus:outline-none focus:border-[#059669]"
-          />
-          <button
-            onClick={() => handleSend()}
-            disabled={!inputQuery.trim()}
-            className="px-5 py-3 rounded-xl bg-[#059669] hover:bg-[#10B981] disabled:opacity-50 text-white font-bold text-xs transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-950/40 shrink-0 cursor-pointer"
-          >
-            <span>Ask</span>
-            <Send className="w-3.5 h-3.5" />
-          </button>
+        <div className="space-y-3 pt-4 border-t border-[#2E2E2E]">
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={inputQuery}
+              onChange={(e) => setInputQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Ask any StockSphere domain question (e.g., 'What is CNC Unit #4 status?')"
+              className="flex-1 px-4 py-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] text-xs text-[#FAFAFA] placeholder-[#A3A3A3]/60 focus:outline-none focus:border-[#059669]"
+            />
+            <button
+              onClick={() => handleSend()}
+              disabled={!inputQuery.trim() || isTyping}
+              className="px-5 py-3 rounded-xl bg-[#059669] hover:bg-[#10B981] disabled:opacity-50 text-white font-bold text-xs transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-950/40 shrink-0 cursor-pointer"
+            >
+              <span>Ask AI</span>
+              <Send className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between text-[11px] text-[#A3A3A3] px-1">
+            <span>
+              💡 Try asking about <strong>Inventory</strong>, <strong>CNC Telemetry</strong>, <strong>Suppliers</strong>, or <strong>Logistics</strong>.
+            </span>
+            <span className="text-emerald-400 font-medium flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5" /> Domain Restrictions Active
+            </span>
+          </div>
         </div>
       </div>
+
+      {/* API Key Modal */}
+      {showApiKeyModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#1A1A1A] border border-[#2E2E2E] rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-[#FAFAFA] flex items-center gap-2">
+                <Key className="w-5 h-5 text-[#10B981]" /> Configure Google Gemini API Key
+              </h3>
+              <button
+                onClick={() => setShowApiKeyModal(false)}
+                className="text-[#A3A3A3] hover:text-white p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-[#A3A3A3] leading-relaxed">
+              Enter your <strong>Google Gemini API Key</strong> to connect real LLM reasoning. The key will be securely saved in your browser standard local storage. If no key is provided, StockSphere's built-in Domain RAG Engine is used automatically.
+            </p>
+
+            <form onSubmit={handleSaveApiKey} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#FAFAFA] mb-1">
+                  Gemini API Key
+                </label>
+                <input
+                  type="password"
+                  value={tempApiKey}
+                  onChange={(e) => setTempApiKey(e.target.value)}
+                  placeholder="AIzaSy..."
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] text-xs text-[#FAFAFA] focus:outline-none focus:border-[#059669]"
+                />
+              </div>
+
+              <div className="flex items-center justify-between pt-2">
+                {apiKey ? (
+                  <button
+                    type="button"
+                    onClick={handleClearApiKey}
+                    className="px-3 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/60 border border-red-800/50 text-red-300 text-xs font-medium cursor-pointer transition-colors"
+                  >
+                    Clear Key
+                  </button>
+                ) : <div />}
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowApiKeyModal(false)}
+                    className="px-4 py-2 rounded-xl bg-[#262626] text-[#FAFAFA] text-xs font-medium cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-xl bg-[#059669] hover:bg-[#10B981] text-white text-xs font-bold cursor-pointer transition-colors"
+                  >
+                    Save & Activate
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
