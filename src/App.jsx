@@ -14,7 +14,7 @@ import { CommandPalette } from './components/common/CommandPalette';
 import { EnterpriseSplash } from './components/auth/EnterpriseSplash';
 import { AdminLogin } from './components/auth/AdminLogin';
 import { authService } from './services/authService';
-import { Settings, ShieldCheck, Database, Server, Key, Lock, FileText, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Database } from 'lucide-react';
 
 export function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -24,8 +24,8 @@ export function App() {
   const [currentUser, setCurrentUser] = useState(() => authService.getCurrentUser());
   const [showSplash, setShowSplash] = useState(() => {
     try {
-      return localStorage.getItem('solvex_skip_splash') !== 'true';
-    } catch (e) {
+      return localStorage.getItem('stocksphere_skip_splash') !== 'true';
+    } catch {
       return true;
     }
   });
@@ -60,7 +60,7 @@ export function App() {
   // If splash is active, show EnterpriseSplash before Login Page
   if (showSplash && !isAuthenticated) {
     return (
-      <div className="relative min-h-screen bg-[#0B1220]">
+      <div className="relative min-h-screen bg-[#0A0A0A]">
         <AdminLogin onLoginSuccess={handleLoginSuccess} />
         <EnterpriseSplash onComplete={() => setShowSplash(false)} />
       </div>
@@ -73,7 +73,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1220] text-[#F9FAFB] flex flex-col font-sans selection:bg-[#3B82F6] selection:text-white">
+    <div className="min-h-screen bg-[#0A0A0A] text-[#FAFAFA] flex flex-col font-sans selection:bg-[#059669] selection:text-white">
       {/* Top Header */}
       <Navbar 
         activeTab={activeTab} 
@@ -117,31 +117,31 @@ export function App() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-5 rounded-2xl bg-[#111827]/82 border border-white/[0.08] space-y-3 text-xs">
-                  <h3 className="font-bold text-sm text-[#F9FAFB] flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#3B82F6]" /> SOC-2 Security & RBAC Configuration
+                <div className="p-5 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E] space-y-3 text-xs">
+                  <h3 className="font-bold text-sm text-[#FAFAFA] flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#059669]" /> SOC-2 Security & RBAC Configuration
                   </h3>
-                  <div className="p-3 rounded-xl bg-[#0B1220] border border-white/5 space-y-1">
-                    <span className="text-[#9CA3AF] text-[10px]">Enterprise SSO Protocol:</span>
-                    <div className="font-semibold text-[#F9FAFB]">SAML 2.0 / Okta Active</div>
+                  <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1">
+                    <span className="text-[#A3A3A3] text-[10px]">Enterprise SSO Protocol:</span>
+                    <div className="font-semibold text-[#FAFAFA]">SAML 2.0 / Okta Active</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#0B1220] border border-white/5 space-y-1">
-                    <span className="text-[#9CA3AF] text-[10px]">Database Encryption:</span>
-                    <div className="font-semibold text-[#F9FAFB]">AES-256 at Rest & TLS 1.3 in Transit</div>
+                  <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1">
+                    <span className="text-[#A3A3A3] text-[10px]">Database Encryption:</span>
+                    <div className="font-semibold text-[#FAFAFA]">AES-256 at Rest & TLS 1.3 in Transit</div>
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-[#111827]/82 border border-white/[0.08] space-y-3 text-xs">
-                  <h3 className="font-bold text-sm text-[#F9FAFB] flex items-center gap-2">
-                    <Database className="w-4 h-4 text-[#3B82F6]" /> Database & LLM Engine Config
+                <div className="p-5 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E] space-y-3 text-xs">
+                  <h3 className="font-bold text-sm text-[#FAFAFA] flex items-center gap-2">
+                    <Database className="w-4 h-4 text-[#059669]" /> Database & LLM Engine Config
                   </h3>
-                  <div className="p-3 rounded-xl bg-[#0B1220] border border-white/5 space-y-1">
-                    <span className="text-[#9CA3AF] text-[10px]">Knowledge Graph Engine:</span>
-                    <div className="font-semibold text-[#F9FAFB]">Neo4j Enterprise Cluster v5.12</div>
+                  <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1">
+                    <span className="text-[#A3A3A3] text-[10px]">Knowledge Graph Engine:</span>
+                    <div className="font-semibold text-[#FAFAFA]">Neo4j Enterprise Cluster v5.12</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#0B1220] border border-white/5 space-y-1">
-                    <span className="text-[#9CA3AF] text-[10px]">Agent Framework:</span>
-                    <div className="font-semibold text-[#F9FAFB]">LangGraph / CrewAI Hybrid Mesh</div>
+                  <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1">
+                    <span className="text-[#A3A3A3] text-[10px]">Agent Framework:</span>
+                    <div className="font-semibold text-[#FAFAFA]">LangGraph / CrewAI Hybrid Mesh</div>
                   </div>
                 </div>
               </div>
@@ -151,8 +151,8 @@ export function App() {
           {/* Architecture & Documentation Module */}
           {activeTab === 'docs' && (
             <div className="space-y-6 pb-12">
-              <div className="p-6 rounded-2xl bg-[#111827]/82 border border-white/[0.08]">
-                <h1 className="text-2xl font-extrabold text-[#F9FAFB]">SolveX AI Architecture & Documentation</h1>
+              <div className="p-6 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E]">
+                <h1 className="text-2xl font-extrabold text-[#FAFAFA]">StockSphere AI Architecture & Documentation</h1>
                 <p className="text-xs text-[#9CA3AF] mt-1">Enterprise Intelligence Operating System technical design specs.</p>
               </div>
 

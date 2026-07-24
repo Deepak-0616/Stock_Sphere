@@ -10,8 +10,7 @@ import {
   TrendingUp, 
   Building2, 
   CheckSquare,
-  ArrowRight,
-  Sparkles
+  ArrowRight
 } from 'lucide-react';
 
 export const CommandPalette = ({ isOpen, onClose, setActiveTab }) => {
@@ -22,9 +21,6 @@ export const CommandPalette = ({ isOpen, onClose, setActiveTab }) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         if (isOpen) onClose();
-        else {
-          // Open triggered by parent or event
-        }
       }
       if (e.key === 'Escape' && isOpen) {
         onClose();
@@ -59,22 +55,22 @@ export const CommandPalette = ({ isOpen, onClose, setActiveTab }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/20 backdrop-blur-md animate-fadeIn">
-      <div className="w-full max-w-xl bg-white border border-black/10 rounded-2xl shadow-2xl shadow-black/5 overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/60 backdrop-blur-md">
+      <div className="w-full max-w-xl bg-[#1A1A1A] border border-[#2E2E2E] rounded-2xl shadow-2xl shadow-black/90 overflow-hidden flex flex-col">
         {/* Search Bar */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-black/10 bg-slate-50">
-          <Search className="w-5 h-5 text-red-700 shrink-0" />
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-[#2E2E2E] bg-[#0A0A0A]">
+          <Search className="w-5 h-5 text-[#059669] shrink-0" />
           <input
             type="text"
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a command, search views, or ask AI (e.g. 'inventory', 'risk', 'agents')..."
-            className="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
+            className="w-full bg-transparent text-sm text-[#FAFAFA] placeholder-[#A3A3A3]/60 focus:outline-none"
           />
           <button
             onClick={onClose}
-            className="text-slate-600 hover:text-slate-900 p-1 rounded-lg hover:bg-red-50 transition-colors"
+            className="text-[#A3A3A3] hover:text-[#FAFAFA] p-1 rounded-lg hover:bg-[#1A1A1A] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -83,8 +79,8 @@ export const CommandPalette = ({ isOpen, onClose, setActiveTab }) => {
         {/* Results List */}
         <div className="max-h-80 overflow-y-auto p-2 space-y-1">
           {filtered.length === 0 ? (
-            <div className="p-8 text-center text-xs text-slate-500">
-              No matching commands. Ask the <button onClick={() => handleSelect('copilot')} className="text-red-700 underline font-semibold">AI Copilot</button> directly!
+            <div className="p-8 text-center text-xs text-[#A3A3A3]">
+              No matching commands. Ask the <button onClick={() => handleSelect('copilot')} className="text-[#10B981] underline font-semibold cursor-pointer">AI Copilot</button> directly!
             </div>
           ) : (
             filtered.map((item) => {
@@ -93,37 +89,38 @@ export const CommandPalette = ({ isOpen, onClose, setActiveTab }) => {
                 <button
                   key={item.id}
                   onClick={() => handleSelect(item.id)}
-                  className="w-full flex items-center justify-between p-3 rounded-xl text-left hover:bg-red-50 transition-colors group"
+                  className="w-full flex items-center justify-between p-3 rounded-xl text-left hover:bg-[#0A0A0A] border border-transparent hover:border-[#2E2E2E] transition-all group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700 group-hover:border-red-200">
+                    <div className="w-9 h-9 rounded-xl bg-[#059669]/15 border border-[#059669]/30 flex items-center justify-center text-[#10B981] group-hover:border-[#059669]/50">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-900 group-hover:text-red-700 flex items-center gap-2">
-                        <span>{item.label}</span>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-red-50 text-red-700 font-mono font-normal">
-                          {item.category}
-                        </span>
-                      </div>
-                      <div className="text-[11px] text-slate-500">{item.desc}</div>
+                      <div className="font-bold text-xs text-[#FAFAFA] group-hover:text-[#10B981]">{item.label}</div>
+                      <div className="text-[10px] text-[#A3A3A3]">{item.desc}</div>
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-red-700 group-hover:translate-x-1 transition-all" />
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] px-2 py-0.5 rounded font-mono text-[#A3A3A3] bg-[#0A0A0A] border border-[#2E2E2E]">
+                      {item.category}
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#A3A3A3] group-hover:text-[#10B981]" />
+                  </div>
                 </button>
               );
             })
           )}
         </div>
 
-        {/* Footer info */}
-        <div className="px-4 py-2 bg-red-50 border-t border-red-100 flex items-center justify-between text-[11px] text-slate-500">
-          <span>Tip: Press <kbd className="px-1.5 py-0.5 rounded bg-white text-slate-600 font-mono text-[10px]">Esc</kbd> to close</span>
-          <span className="flex items-center gap-1 text-red-700">
-            <Sparkles className="w-3 h-3" /> Quick Command Palette
-          </span>
+        {/* Footer */}
+        <div className="px-4 py-2 bg-[#0A0A0A] border-t border-[#2E2E2E] flex items-center justify-between text-[10px] text-[#A3A3A3]">
+          <span>Use ↑ ↓ to navigate</span>
+          <span>Press <kbd className="px-1 py-0.5 rounded bg-[#1A1A1A] border border-[#2E2E2E] text-[#FAFAFA]">ESC</kbd> to close</span>
         </div>
       </div>
     </div>
   );
 };
+
+export default CommandPalette;
