@@ -10,7 +10,8 @@ import {
   Sparkles,
   HelpCircle,
   Menu,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 import { ENTERPRISE_METRICS } from '../../data/mockEnterpriseData';
 import { HelpTooltip } from '../common/HelpTooltip';
@@ -21,11 +22,13 @@ export const Navbar = ({
   onToggleLanding,
   onOpenCommandPalette,
   onToggleMobileSidebar,
-  isMobileSidebarOpen
+  isMobileSidebarOpen,
+  currentUser,
+  onLogout
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('Chief Operating Officer (Executive)');
+  const [selectedRole, setSelectedRole] = useState(currentUser?.role || 'Chief Operating Officer (Executive)');
 
   return (
     <header className="h-16 border-b border-black/10 bg-white sticky top-0 z-40 px-4 md:px-6 flex items-center justify-between shadow-sm shadow-black/5">
@@ -155,19 +158,19 @@ export const Navbar = ({
             className="flex items-center gap-2 p-1.5 rounded-lg bg-white border border-black/10 hover:border-black/20 transition-colors"
           >
             <div className="w-7 h-7 rounded-full bg-red-50 flex items-center justify-center text-red-700 font-bold text-xs">
-              AD
+              {currentUser?.avatar || 'AD'}
             </div>
             <div className="hidden sm:block text-left">
-              <div className="text-xs font-semibold text-slate-900 leading-tight">Alex Drake</div>
-              <div className="text-[10px] text-slate-500 leading-tight">COO / Executive</div>
+              <div className="text-xs font-semibold text-slate-900 leading-tight">{currentUser?.name || 'Alex Drake'}</div>
+              <div className="text-[10px] text-slate-500 leading-tight truncate max-w-[130px]">{currentUser?.role || 'COO / Executive'}</div>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-900" />
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-64 bg-white border border-black/10 rounded-xl shadow-2xl shadow-black/5 p-2 z-50 text-xs">
+            <div className="absolute right-0 mt-2 w-64 bg-white border border-black/10 rounded-xl shadow-2xl shadow-black/5 p-2 z-50 text-xs animate-fadeIn">
               <div className="p-2 border-b border-black/10 text-slate-700">
-                Logged in as <strong className="text-slate-900">alex.drake@solvex.ai</strong>
+                Logged in as <strong className="text-slate-900 block truncate">{currentUser?.email || 'admin@solvex.ai'}</strong>
               </div>
               <div className="py-1">
                 <div className="px-2 py-1 text-[10px] font-semibold text-slate-500 uppercase">Role-Based Access Control</div>
@@ -177,10 +180,24 @@ export const Navbar = ({
                     onClick={() => { setSelectedRole(role); setShowUserMenu(false); }}
                     className={`w-full text-left px-2 py-1.5 rounded hover:bg-red-50 flex items-center justify-between ${selectedRole === role ? 'text-red-700 font-semibold' : 'text-slate-600'}`}
                   >
-                    <span>{role}</span>
-                    {selectedRole === role && <CheckCircle2 className="w-3.5 h-3.5 text-red-600" />}
+                    <span className="truncate">{role}</span>
+                    {selectedRole === role && <CheckCircle2 className="w-3.5 h-3.5 text-red-600 shrink-0" />}
                   </button>
                 ))}
+              </div>
+
+              {/* Logout Admin Button */}
+              <div className="pt-1 mt-1 border-t border-black/10">
+                <button
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    if (onLogout) onLogout();
+                  }}
+                  className="w-full text-left px-2.5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-semibold flex items-center gap-2 transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4 text-red-700" />
+                  <span>Logout Admin Session</span>
+                </button>
               </div>
             </div>
           )}

@@ -11,6 +11,8 @@ import { DepartmentHub } from './components/departments/DepartmentHub';
 import { AutomationQueue } from './components/automation/AutomationQueue';
 import { LandingPage } from './components/landing/LandingPage';
 import { CommandPalette } from './components/common/CommandPalette';
+import { AdminLogin } from './components/auth/AdminLogin';
+import { authService } from './services/authService';
 import { Settings, ShieldCheck, Database, Server, Key, Lock, FileText, CheckCircle2 } from 'lucide-react';
 
 export function App() {
@@ -18,6 +20,18 @@ export function App() {
   const [showLanding, setShowLanding] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(() => authService.getCurrentUser());
+
+  const isAuthenticated = !!currentUser;
+
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+  };
+
+  const handleLogout = () => {
+    authService.logout();
+    setCurrentUser(null);
+  };
 
   // Global Ctrl+K listener to open Command Palette
   useEffect(() => {
@@ -35,6 +49,11 @@ export function App() {
     return <LandingPage onLaunchApp={() => setShowLanding(false)} />;
   }
 
+  // Admin Login gatekeeper: If not authenticated, require Admin Login
+  if (!isAuthenticated) {
+    return <AdminLogin onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans selection:bg-red-500 selection:text-white">
       {/* Top Header */}
@@ -45,6 +64,8 @@ export function App() {
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onToggleMobileSidebar={() => setIsMobileSidebarOpen(prev => !prev)}
         isMobileSidebarOpen={isMobileSidebarOpen}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
       <div className="flex-1 flex overflow-hidden">
