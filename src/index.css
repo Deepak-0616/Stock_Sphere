@@ -2,19 +2,19 @@
 
 @layer base {
   :root {
-    --bg-main: #ffffff;
-    --bg-card: rgba(255, 255, 255, 0.96);
-    --border-card: rgba(0, 0, 0, 0.12);
-    --accent-primary: #ff1d25;
-    --accent-soft: rgba(255, 29, 37, 0.12);
-    --text-main: #111827;
-    --text-muted: #6b7280;
-    --shadow-card: 0 24px 64px rgba(0, 0, 0, 0.08);
+    --bg-main: #0B1220;
+    --bg-card: rgba(17, 24, 39, 0.82);
+    --border-card: rgba(255, 255, 255, 0.08);
+    --accent-primary: #3B82F6;
+    --accent-soft: rgba(59, 130, 246, 0.12);
+    --text-main: #F9FAFB;
+    --text-muted: #9CA3AF;
+    --shadow-card: 0 24px 64px rgba(0, 0, 0, 0.6);
   }
 
   body {
-    background-color: #ffffff;
-    color: #111827;
+    background-color: #0B1220;
+    color: #F9FAFB;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     overflow-x: hidden;
     margin: 0;
@@ -24,14 +24,14 @@
 
 /* Glassmorphism utilities */
 .glass-panel {
-  background: rgba(13, 19, 36, 0.65);
+  background: rgba(17, 24, 39, 0.82);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-panel-interactive {
-  background: rgba(13, 19, 36, 0.65);
+  background: rgba(17, 24, 39, 0.82);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -39,9 +39,9 @@
 }
 
 .glass-panel-interactive:hover {
-  background: rgba(20, 29, 53, 0.85);
+  background: rgba(23, 33, 53, 0.9);
   border-color: rgba(59, 130, 246, 0.3);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(59, 130, 246, 0.15);
   transform: translateY(-2px);
 }
 
@@ -56,8 +56,8 @@
 }
 
 .glass-card-glow-emerald {
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 25px rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
 }
 
 .glass-card-glow-amber {
@@ -72,16 +72,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(11, 18, 32, 0.8);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.16);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.28);
+  background: rgba(59, 130, 246, 0.4);
 }
 
 /* Keyframe Animations */
@@ -114,7 +114,7 @@
 
 /* Gradient Text */
 .gradient-text-blue {
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -126,7 +126,7 @@
 }
 
 .gradient-text-emerald {
-  background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+  background: linear-gradient(135deg, #34d399 0%, #22c55e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

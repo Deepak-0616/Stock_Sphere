@@ -11,6 +11,7 @@ import { DepartmentHub } from './components/departments/DepartmentHub';
 import { AutomationQueue } from './components/automation/AutomationQueue';
 import { LandingPage } from './components/landing/LandingPage';
 import { CommandPalette } from './components/common/CommandPalette';
+import { EnterpriseSplash } from './components/auth/EnterpriseSplash';
 import { AdminLogin } from './components/auth/AdminLogin';
 import { authService } from './services/authService';
 import { Settings, ShieldCheck, Database, Server, Key, Lock, FileText, CheckCircle2 } from 'lucide-react';
@@ -21,6 +22,13 @@ export function App() {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(() => authService.getCurrentUser());
+  const [showSplash, setShowSplash] = useState(() => {
+    try {
+      return localStorage.getItem('solvex_skip_splash') !== 'true';
+    } catch (e) {
+      return true;
+    }
+  });
 
   const isAuthenticated = !!currentUser;
 
@@ -49,13 +57,23 @@ export function App() {
     return <LandingPage onLaunchApp={() => setShowLanding(false)} />;
   }
 
+  // If splash is active, show EnterpriseSplash before Login Page
+  if (showSplash && !isAuthenticated) {
+    return (
+      <div className="relative min-h-screen bg-[#0B1220]">
+        <AdminLogin onLoginSuccess={handleLoginSuccess} />
+        <EnterpriseSplash onComplete={() => setShowSplash(false)} />
+      </div>
+    );
+  }
+
   // Admin Login gatekeeper: If not authenticated, require Admin Login
   if (!isAuthenticated) {
     return <AdminLogin onLoginSuccess={handleLoginSuccess} />;
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans selection:bg-red-500 selection:text-white">
+    <div className="min-h-screen bg-[#0B1220] text-[#F9FAFB] flex flex-col font-sans selection:bg-[#3B82F6] selection:text-white">
       {/* Top Header */}
       <Navbar 
         activeTab={activeTab} 
@@ -91,39 +109,39 @@ export function App() {
           {/* Settings & System Audit Module */}
           {activeTab === 'settings' && (
             <div className="space-y-6 pb-12">
-              <div className="p-6 rounded-2xl bg-slate-50 border border-black/10 flex items-center justify-between">
+              <div className="p-6 rounded-2xl bg-[#111827]/82 border border-white/[0.08] flex items-center justify-between">
                 <div>
-                  <h1 className="text-2xl font-extrabold text-slate-900">System Settings & Audit Logs</h1>
-                  <p className="text-xs text-slate-600 mt-1">Enterprise SSO, API keys, role permissions, and immutable security audit logs.</p>
+                  <h1 className="text-2xl font-extrabold text-[#F9FAFB]">System Settings & Audit Logs</h1>
+                  <p className="text-xs text-[#9CA3AF] mt-1">Enterprise SSO, API keys, role permissions, and immutable security audit logs.</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-5 rounded-2xl bg-slate-50 border border-black/10 space-y-3 text-xs">
-                  <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-red-700" /> SOC-2 Security & RBAC Configuration
+                <div className="p-5 rounded-2xl bg-[#111827]/82 border border-white/[0.08] space-y-3 text-xs">
+                  <h3 className="font-bold text-sm text-[#F9FAFB] flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#3B82F6]" /> SOC-2 Security & RBAC Configuration
                   </h3>
-                  <div className="p-3 rounded-xl bg-white border border-black/10 space-y-1">
-                    <span className="text-slate-500 text-[10px]">Enterprise SSO Protocol:</span>
-                    <div className="font-semibold text-slate-900">SAML 2.0 / Okta Active</div>
+                  <div className="p-3 rounded-xl bg-[#0B1220] border border-white/5 space-y-1">
+                    <span className="text-[#9CA3AF] text-[10px]">Enterprise SSO Protocol:</span>
+                    <div className="font-semibold text-[#F9FAFB]">SAML 2.0 / Okta Active</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-white border border-black/10 space-y-1">
-                    <span className="text-slate-500 text-[10px]">Database Encryption:</span>
-                    <div className="font-semibold text-slate-900">AES-256 at Rest & TLS 1.3 in Transit</div>
+                  <div className="p-3 rounded-xl bg-[#0B1220] border border-white/5 space-y-1">
+                    <span className="text-[#9CA3AF] text-[10px]">Database Encryption:</span>
+                    <div className="font-semibold text-[#F9FAFB]">AES-256 at Rest & TLS 1.3 in Transit</div>
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-50 border border-black/10 space-y-3 text-xs">
-                  <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                    <Database className="w-4 h-4 text-red-700" /> Database & LLM Engine Config
+                <div className="p-5 rounded-2xl bg-[#111827]/82 border border-white/[0.08] space-y-3 text-xs">
+                  <h3 className="font-bold text-sm text-[#F9FAFB] flex items-center gap-2">
+                    <Database className="w-4 h-4 text-[#3B82F6]" /> Database & LLM Engine Config
                   </h3>
-                  <div className="p-3 rounded-xl bg-white border border-black/10 space-y-1">
-                    <span className="text-slate-500 text-[10px]">Knowledge Graph Engine:</span>
-                    <div className="font-semibold text-slate-900">Neo4j Enterprise Cluster v5.12</div>
+                  <div className="p-3 rounded-xl bg-[#0B1220] border border-white/5 space-y-1">
+                    <span className="text-[#9CA3AF] text-[10px]">Knowledge Graph Engine:</span>
+                    <div className="font-semibold text-[#F9FAFB]">Neo4j Enterprise Cluster v5.12</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-white border border-black/10 space-y-1">
-                    <span className="text-slate-500 text-[10px]">Agent Framework:</span>
-                    <div className="font-semibold text-slate-900">LangGraph / CrewAI Hybrid Mesh</div>
+                  <div className="p-3 rounded-xl bg-[#0B1220] border border-white/5 space-y-1">
+                    <span className="text-[#9CA3AF] text-[10px]">Agent Framework:</span>
+                    <div className="font-semibold text-[#F9FAFB]">LangGraph / CrewAI Hybrid Mesh</div>
                   </div>
                 </div>
               </div>
@@ -133,18 +151,18 @@ export function App() {
           {/* Architecture & Documentation Module */}
           {activeTab === 'docs' && (
             <div className="space-y-6 pb-12">
-              <div className="p-6 rounded-2xl bg-slate-50 border border-black/10">
-                <h1 className="text-2xl font-extrabold text-slate-900">SolveX AI Architecture & Documentation</h1>
-                <p className="text-xs text-slate-600 mt-1">Enterprise Intelligence Operating System technical design specs.</p>
+              <div className="p-6 rounded-2xl bg-[#111827]/82 border border-white/[0.08]">
+                <h1 className="text-2xl font-extrabold text-[#F9FAFB]">SolveX AI Architecture & Documentation</h1>
+                <p className="text-xs text-[#9CA3AF] mt-1">Enterprise Intelligence Operating System technical design specs.</p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-50 border border-black/10 space-y-4 text-xs">
-                <h3 className="font-bold text-sm text-slate-900">Core Architectural Innovations</h3>
-                <ul className="list-disc list-inside space-y-2 text-slate-600">
-                  <li><strong>Multi-Agent Neural Mesh:</strong> 10 domain-specialized agents (Inventory, Sales, Finance, HR, Production, Supplier, Customer, Logistics, Compliance, Risk) executing cross-departmental debate protocol.</li>
-                  <li><strong>Enterprise Digital Twin:</strong> Real-time mathematical simulation matrix predicting revenue, profit margins, machine stress, and delivery SLAs before committing capital.</li>
-                  <li><strong>Explainable AI Root Cause Tree:</strong> 100% transparent causality breakdown tracing every anomaly to its underlying systemic origin.</li>
-                  <li><strong>Knowledge Graph Ontology:</strong> 50+ interconnected nodes mapping real-time enterprise entity relationships.</li>
+              <div className="p-6 rounded-2xl bg-[#111827]/82 border border-white/[0.08] space-y-4 text-xs">
+                <h3 className="font-bold text-sm text-[#F9FAFB]">Core Architectural Innovations</h3>
+                <ul className="list-disc list-inside space-y-2 text-[#9CA3AF]">
+                  <li><strong className="text-[#F9FAFB]">Multi-Agent Neural Mesh:</strong> 10 domain-specialized agents (Inventory, Sales, Finance, HR, Production, Supplier, Customer, Logistics, Compliance, Risk) executing cross-departmental debate protocol.</li>
+                  <li><strong className="text-[#F9FAFB]">Enterprise Digital Twin:</strong> Real-time mathematical simulation matrix predicting revenue, profit margins, machine stress, and delivery SLAs before committing capital.</li>
+                  <li><strong className="text-[#F9FAFB]">Explainable AI Root Cause Tree:</strong> 100% transparent causality breakdown tracing every anomaly to its underlying systemic origin.</li>
+                  <li><strong className="text-[#F9FAFB]">Knowledge Graph Ontology:</strong> 50+ interconnected nodes mapping real-time enterprise entity relationships.</li>
                 </ul>
               </div>
             </div>
