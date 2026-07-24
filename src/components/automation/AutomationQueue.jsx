@@ -6,9 +6,7 @@ import {
   AlertTriangle, 
   Zap, 
   ShieldCheck, 
-  ArrowRight,
-  Filter,
-  Search
+  ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -68,27 +66,27 @@ export const AutomationQueue = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-semibold text-blue-400 mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#059669]/15 border border-[#059669]/40 text-xs font-semibold text-[#10B981] mb-2">
             <CheckSquare className="w-3.5 h-3.5" /> Autonomous Workflow Orchestrator
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">Automation Engine & Approval Queue</h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <h1 className="text-2xl font-extrabold text-[#FAFAFA] tracking-tight">Automation Engine & Approval Queue</h1>
+          <p className="text-xs text-[#A3A3A3] mt-1">
             Low-risk routine workflows run fully automatically. High-value critical decisions require 1-click executive approval.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
-            <div className="text-[10px] text-slate-400 uppercase font-semibold">Pending Approval</div>
+          <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] text-center">
+            <div className="text-[10px] text-[#A3A3A3] uppercase font-semibold">Pending Approval</div>
             <div className="text-base font-extrabold text-amber-400">
               {tasks.filter(t => t.status === 'PENDING_APPROVAL').length} Requests
             </div>
           </div>
-          <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
-            <div className="text-[10px] text-slate-400 uppercase font-semibold">Auto-Executed Today</div>
-            <div className="text-base font-extrabold text-emerald-400">142 Workflows</div>
+          <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] text-center">
+            <div className="text-[10px] text-[#A3A3A3] uppercase font-semibold">Auto-Executed Today</div>
+            <div className="text-base font-extrabold text-[#10B981]">142 Workflows</div>
           </div>
         </div>
       </div>
@@ -96,46 +94,48 @@ export const AutomationQueue = () => {
       {/* Task Queue List */}
       <div className="space-y-3">
         {tasks.map((task) => (
-          <div key={task.id} className="p-5 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div key={task.id} className="p-5 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="space-y-1.5 flex-1">
               <div className="flex items-center gap-2">
                 <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold ${
-                  task.priority === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400' : 'bg-blue-500/20 text-blue-400'
+                  task.priority === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
+                  task.priority === 'HIGH' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
+                  'bg-[#059669]/20 text-[#10B981] border border-[#059669]/40'
                 }`}>
                   {task.priority} PRIORITY
                 </span>
-                <span className="text-[11px] text-slate-400">Initiator: <strong className="text-slate-200">{task.agent}</strong></span>
+                <span className="text-xs text-[#A3A3A3]">Initiated by <strong className="text-[#FAFAFA]">{task.agent}</strong></span>
               </div>
 
-              <h4 className="font-bold text-base text-white">{task.title}</h4>
-              <p className="text-xs text-slate-300 leading-relaxed">{task.summary}</p>
+              <h3 className="font-extrabold text-base text-[#FAFAFA]">{task.title}</h3>
+              <p className="text-xs text-[#A3A3A3] max-w-3xl leading-relaxed">{task.summary}</p>
 
-              <div className="flex items-center gap-4 text-xs pt-1">
-                <span className="text-emerald-400 font-bold">Impact: {task.impact}</span>
-                <span className="text-slate-400">Cost: <strong className="text-slate-200">{task.cost}</strong></span>
+              <div className="flex flex-wrap items-center gap-4 text-xs pt-1">
+                <span className="text-[#10B981] font-bold">Estimated Impact: {task.impact}</span>
+                <span className="text-[#A3A3A3]">Allocation Cost: <strong className="text-[#FAFAFA]">{task.cost}</strong></span>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="shrink-0 w-full lg:w-auto flex items-center gap-2">
+            <div className="flex items-center gap-3 shrink-0">
               {task.status === 'PENDING_APPROVAL' && (
                 <button
                   onClick={() => handleApprove(task.id)}
-                  className="w-full lg:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-[#059669] hover:bg-[#10B981] text-white font-bold text-xs shadow-lg shadow-emerald-950/40 transition-all flex items-center gap-1.5 cursor-pointer"
                 >
-                  <CheckCircle2 className="w-4 h-4" /> Approve Execution
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Approve Executive Order</span>
                 </button>
               )}
 
               {task.status === 'APPROVED' && (
-                <span className="px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 font-bold text-xs border border-emerald-500/30 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4" /> Executed & Audited
+                <span className="px-4 py-2 rounded-xl bg-[#059669]/20 text-[#10B981] font-mono font-bold text-xs border border-[#059669]/40 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#059669]" /> Executed Successfully
                 </span>
               )}
 
               {task.status === 'AUTOMATED' && (
-                <span className="px-4 py-2 rounded-xl bg-slate-800 text-slate-400 font-bold text-xs border border-slate-700 flex items-center gap-1.5">
-                  <Zap className="w-3.5 h-3.5 text-amber-400" /> Auto-Executed by Agent
+                <span className="px-4 py-2 rounded-xl bg-[#0A0A0A] text-[#A3A3A3] font-mono text-xs border border-[#2E2E2E] flex items-center gap-1.5">
+                  <Zap className="w-3.5 h-3.5 text-[#84CC16]" /> Auto-Executed
                 </span>
               )}
             </div>
@@ -145,3 +145,5 @@ export const AutomationQueue = () => {
     </div>
   );
 };
+
+export default AutomationQueue;

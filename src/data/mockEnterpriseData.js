@@ -1,4 +1,4 @@
-// SolveX AI Enterprise Dataset
+// StockSphere AI Enterprise Dataset
 
 export const ENTERPRISE_METRICS = {
   healthScore: 88,
@@ -212,7 +212,7 @@ export const RECENT_DECISIONS_LOG = [
 ];
 
 export const KNOWLEDGE_GRAPH_NODES = [
-  { id: 'n-corp', label: 'SolveX Enterprise HQ', type: 'CORPORATE', dept: 'Executive', status: 'HEALTHY', impact: 'CRITICAL', metrics: 'ARR: ₹428 Cr | Employees: 1,250' },
+  { id: 'n-corp', label: 'StockSphere Enterprise HQ', type: 'CORPORATE', dept: 'Executive', status: 'HEALTHY', impact: 'CRITICAL', metrics: 'ARR: ₹428 Cr | Employees: 1,250' },
   { id: 'n-sales', label: 'Sales Department', type: 'DEPARTMENT', dept: 'Sales', status: 'HEALTHY', impact: 'HIGH', metrics: 'Active Pipeline: ₹85 Cr' },
   { id: 'n-fin', label: 'Finance & Treasury', type: 'DEPARTMENT', dept: 'Finance', status: 'HEALTHY', impact: 'HIGH', metrics: 'Cash Reserve: ₹14.2 Cr' },
   { id: 'n-prod', label: 'Manufacturing Plant-1 (Bengaluru)', type: 'FACILITY', dept: 'Production', status: 'WARNING', impact: 'CRITICAL', metrics: 'Capacity: 88% | OEE: 84.5%' },

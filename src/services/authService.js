@@ -1,9 +1,9 @@
-// Admin Authentication Service for SolveX Enterprise Intelligence OS
+// Admin Authentication Service for StockSphere Enterprise Intelligence OS
 
 const ADMIN_ACCOUNTS = [
   {
     id: 'adm-001',
-    email: 'admin@solvex.ai',
+    email: 'admin@stocksphere.ai',
     password: 'admin',
     name: 'Alex Drake',
     role: 'Chief Operating Officer (Executive Admin)',
@@ -14,7 +14,7 @@ const ADMIN_ACCOUNTS = [
   },
   {
     id: 'adm-002',
-    email: 'sysadmin@solvex.ai',
+    email: 'sysadmin@stocksphere.ai',
     password: 'admin',
     name: 'Sarah Connor',
     role: 'Lead Security & Infrastructure Admin',
@@ -25,7 +25,7 @@ const ADMIN_ACCOUNTS = [
   },
   {
     id: 'adm-003',
-    email: 'coo.admin@solvex.ai',
+    email: 'coo.admin@stocksphere.ai',
     password: 'admin',
     name: 'Michael Chen',
     role: 'VP of Supply Chain & Ops Admin',
@@ -36,7 +36,7 @@ const ADMIN_ACCOUNTS = [
   }
 ];
 
-const STORAGE_KEY = 'solvex_admin_session';
+const STORAGE_KEY = 'stocksphere_admin_session';
 
 export const authService = {
   // Get available admin demo presets
@@ -75,7 +75,7 @@ export const authService = {
         department: admin.department,
         permissions: admin.permissions
       },
-      token: `jwt_solvex_admin_${Date.now()}`,
+      token: `jwt_stocksphere_admin_${Date.now()}`,
       loginTime: new Date().toISOString(),
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
     };

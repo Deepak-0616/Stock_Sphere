@@ -2,118 +2,100 @@ import React, { useState } from 'react';
 import { 
   Bot, 
   Send, 
-  Sparkles, 
-  TrendingUp, 
-  AlertTriangle, 
-  CheckCircle2, 
-  BarChart2, 
-  ArrowRight,
-  Brain,
-  Search,
-  User,
-  Zap
+  ArrowRight, 
+  Loader2
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { StockSphereLogo } from '../common/StockSphereLogo';
+import { 
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer 
+} from 'recharts';
+
+const mockSalesData = [
+  { month: 'May', sales: 12.4 },
+  { month: 'Jun', sales: 14.8 },
+  { month: 'Jul (Est)', sales: 18.2 },
+  { month: 'Aug (Sim)', sales: 21.5 },
+  { month: 'Sep (Sim)', sales: 24.1 }
+];
 
 export const AICopilotWorkspace = ({ setActiveTab }) => {
+  const [inputQuery, setInputQuery] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState([
     {
-      id: 'm-1',
+      id: 1,
       sender: 'ai',
-      text: 'Hello Alex! I am your SolveX Enterprise AI Copilot. I have live telemetry access to all 10 department agents, knowledge graphs, and digital twin models. How can I assist your executive decisions today?',
-      timestamp: '10:00 AM',
+      text: "Hello Alex. I am your StockSphere Enterprise AI Copilot. I have synchronized real-time data across all 10 departments. What would you like to analyze or execute today?",
+      timestamp: '10:14 AM',
       quickPrompts: [
-        'Why is revenue decreasing in West region?',
-        'Which supplier is causing shipping delays?',
-        'Predict next month\'s sales.',
-        'Which department has highest risk right now?',
-        'What should we execute today?'
+        'Why is CNC Unit #4 at risk of breakdown?',
+        'Simulate Q3 Profit Margins if Microchip procurement is delayed',
+        'Show me top 3 cost optimization opportunities'
       ]
     }
   ]);
 
-  const [inputQuery, setInputQuery] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-
-  const handleSend = (queryText) => {
-    const textToSend = queryText || inputQuery;
-    if (!textToSend.trim()) return;
+  const handleSend = (textToSend) => {
+    const query = textToSend || inputQuery;
+    if (!query.trim()) return;
 
     const userMsg = {
-      id: `u-${Date.now()}`,
+      id: Date.now(),
       sender: 'user',
-      text: textToSend,
+      text: query,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
     setMessages(prev => [...prev, userMsg]);
-    if (!queryText) setInputQuery('');
+    if (!textToSend) setInputQuery('');
     setIsTyping(true);
 
     setTimeout(() => {
-      let aiResponseText = `I analyzed your query on "${textToSend}" across Inventory, Sales, Finance, and Supplier Agent neural feeds. Here is the enterprise breakdown:`;
-      let chartType = null;
-      let actionRecommendation = null;
+      let replyText = "Analyzing enterprise knowledge graph across Inventory, Finance, and Production...";
+      let hasChart = false;
+      let hasActions = false;
 
-      if (textToSend.toLowerCase().includes('supplier') || textToSend.toLowerCase().includes('delays')) {
-        aiResponseText = `⚠️ Supplier Agent Alert: **Supplier Alpha (Taiwan)** is causing a 5-day shipping delay due to port congestion at Kaohsiung. This threatens Warehouse West-3 Microchip X402 stock (120 units remaining).`;
-        actionRecommendation = {
-          title: 'Switch Sourcing to Backup Supplier Beta',
-          benefit: 'Prevents ₹8,50,000 SLA Penalty & ₹3.4 Cr order cancelation',
-          tab: 'automation'
-        };
-      } else if (textToSend.toLowerCase().includes('risk') || textToSend.toLowerCase().includes('department')) {
-        aiResponseText = `🚨 Risk Analysis: **Manufacturing & Production Department** currently has the highest risk score (78/100 Health). Primary cause is CNC Machine #4 spindle vibration anomaly (84% failure probability in 72h).`;
-        actionRecommendation = {
-          title: 'Inspect Predictions & Root Cause',
-          benefit: 'Extends machine lifespan by 48 hrs with zero batch scrap',
-          tab: 'predictions'
-        };
-      } else if (textToSend.toLowerCase().includes('sales') || textToSend.toLowerCase().includes('predict')) {
-        aiResponseText = `📈 Predictive Revenue Model: Q3 ARR is projected to reach **₹44.8 Cr (+14.8% YoY)** based on TechCorp enterprise deal pipeline velocity and APAC regional expansion.`;
-        chartType = 'sales';
+      if (query.toLowerCase().includes('cnc') || query.toLowerCase().includes('breakdown')) {
+        replyText = "🔍 **Root Cause Diagnostics for CNC Unit #4:**\n• Spindle vibration reached 8.4mm/s (safety threshold 5.0mm/s).\n• Bearing friction score is elevated by +42% due to missed lubrication cycle #402.\n• AI Recommendation: Trigger automated work order #849 to replace spindle bearing before Saturday shift to avoid ₹14,50,000 in unscheduled downtime.";
+        hasActions = true;
+      } else if (query.toLowerCase().includes('q3') || query.toLowerCase().includes('simulate') || query.toLowerCase().includes('profit')) {
+        replyText = "📊 **Q3 Financial Risk & Margin Simulation:**\n• If Microchip X402 procurement from Supplier Alpha is delayed by 5 days, Q3 revenue drops by -₹42,00,000.\n• Switching to Supplier Beta via Air-Freight retains 98.4% of expected net profit.\n• Simulated ROI: +310% on freight acceleration cost.";
+        hasChart = true;
       } else {
-        aiResponseText = `⚡ Enterprise Action Plan for Today:\n1. Approve emergency Microchip X402 procurement from Supplier Beta.\n2. Schedule 4-hour preventive overhaul for CNC Machine #4 spindle.\n3. Release 3.5% early payment discount to Supplier Alpha.`;
+        replyText = `Understood. Analyzing "${query}" across 50+ knowledge graph nodes. Autonomous agents recommend reviewing active automation queues to prevent delivery SLA penalties.`;
       }
 
       const aiMsg = {
-        id: `ai-${Date.now()}`,
+        id: Date.now() + 1,
         sender: 'ai',
-        text: aiResponseText,
-        chartType,
-        actionRecommendation,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        text: replyText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        hasChart,
+        hasActions
       };
 
       setMessages(prev => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 1000);
+    }, 1200);
   };
-
-  const sampleSalesChartData = [
-    { month: 'May', sales: 36.2 },
-    { month: 'Jun', sales: 38.5 },
-    { month: 'Jul', sales: 42.8 },
-    { month: 'Aug (Pred)', sales: 44.8 }
-  ];
 
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+      <div className="p-6 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E] flex items-center justify-between">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-semibold text-blue-400 mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#059669]/15 border border-[#059669]/40 text-xs font-semibold text-[#10B981] mb-2">
             <Bot className="w-3.5 h-3.5" /> ChatGPT + SAP Copilot Hybrid Interface
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">AI Business Copilot</h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <h1 className="text-2xl font-extrabold text-[#FAFAFA] tracking-tight">AI Business Copilot</h1>
+          <p className="text-xs text-[#A3A3A3] mt-1">
             Natural language executive queries backed by real-time enterprise telemetry, knowledge graphs, and predictive math models.
           </p>
         </div>
       </div>
 
       {/* Chat Container */}
-      <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-6 min-h-[500px] flex flex-col justify-between">
+      <div className="p-6 rounded-2xl bg-[#1A1A1A] border border-[#2E2E2E] space-y-6 min-h-[500px] flex flex-col justify-between">
         {/* Messages Feed */}
         <div className="space-y-4 max-h-[520px] overflow-y-auto pr-2">
           {messages.map((msg) => (
@@ -124,18 +106,18 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
               }`}
             >
               {msg.sender === 'ai' && (
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/20">
-                  <Brain className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-xl bg-[#059669] flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-950/40">
+                  <StockSphereLogo className="w-5 h-5" color="#FAFAFA" />
                 </div>
               )}
 
               <div className={`max-w-xl p-4 rounded-2xl space-y-3 ${
                 msg.sender === 'user'
-                  ? 'bg-blue-600 text-white rounded-tr-none'
-                  : 'bg-slate-900 border border-slate-800 text-slate-200 rounded-tl-none'
+                  ? 'bg-[#059669] text-[#FAFAFA] rounded-tr-none'
+                  : 'bg-[#0A0A0A] border border-[#2E2E2E] text-[#FAFAFA] rounded-tl-none'
               }`}>
                 <div className="flex items-center justify-between text-[10px] opacity-70 pb-1 border-b border-white/10">
-                  <span>{msg.sender === 'user' ? 'You (Alex Drake)' : 'SolveX AI Copilot'}</span>
+                  <span>{msg.sender === 'user' ? 'You (Alex Drake)' : 'StockSphere AI Copilot'}</span>
                   <span className="font-mono">{msg.timestamp}</span>
                 </div>
 
@@ -146,13 +128,13 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
                 {/* Quick Prompts Panel */}
                 {msg.quickPrompts && (
                   <div className="space-y-1.5 pt-2">
-                    <span className="text-[10px] text-slate-400 uppercase font-bold">Suggested Executive Queries:</span>
+                    <span className="text-[10px] text-[#A3A3A3] uppercase font-bold">Suggested Executive Queries:</span>
                     <div className="flex flex-wrap gap-1.5">
-                      {msg.quickPrompts.map((prompt, idx) => (
+                      {msg.quickPrompts.map((prompt, i) => (
                         <button
-                          key={idx}
+                          key={i}
                           onClick={() => handleSend(prompt)}
-                          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-blue-600/20 text-slate-300 hover:text-blue-300 border border-slate-700 text-[11px] transition-colors"
+                          className="px-2.5 py-1 rounded-lg bg-[#1A1A1A] hover:bg-[#059669]/20 text-[#A3A3A3] hover:text-[#10B981] border border-[#2E2E2E] text-[11px] transition-colors cursor-pointer"
                         >
                           {prompt}
                         </button>
@@ -161,35 +143,40 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
                   </div>
                 )}
 
-                {/* Inline Chart Response */}
-                {msg.chartType === 'sales' && (
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2 mt-2">
-                    <span className="text-[10px] font-bold text-blue-400 uppercase">Q3 Sales Forecast Model</span>
+                {/* Inline Forecast Chart */}
+                {msg.hasChart && (
+                  <div className="p-3 rounded-xl bg-[#1A1A1A] border border-[#2E2E2E] space-y-2 mt-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-[#10B981] uppercase font-mono">Q3 Sales Forecast Model</span>
+                      <span className="text-[10px] text-[#A3A3A3]">+24.1 Cr Projected</span>
+                    </div>
                     <div className="h-36 w-full">
                       <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={sampleSalesChartData}>
-                          <XAxis dataKey="month" stroke="#64748b" fontSize={10} />
-                          <YAxis stroke="#64748b" fontSize={10} />
-                          <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
-                          <Area type="monotone" dataKey="sales" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
+                        <AreaChart data={mockSalesData}>
+                          <XAxis dataKey="month" stroke="#A3A3A3" fontSize={10} />
+                          <YAxis stroke="#A3A3A3" fontSize={10} />
+                          <Tooltip contentStyle={{ backgroundColor: '#0A0A0A', borderColor: '#2E2E2E' }} />
+                          <Area type="monotone" dataKey="sales" stroke="#059669" fill="#059669" fillOpacity={0.3} />
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>
                   </div>
                 )}
 
-                {/* Actionable Trigger Recommendation */}
-                {msg.actionRecommendation && (
-                  <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/40 space-y-2 mt-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-xs text-emerald-400">{msg.actionRecommendation.title}</span>
-                      <span className="text-[10px] text-emerald-300 font-bold">{msg.actionRecommendation.benefit}</span>
-                    </div>
+                {/* Inline Action Buttons */}
+                {msg.hasActions && (
+                  <div className="flex items-center gap-2 pt-2">
                     <button
-                      onClick={() => setActiveTab(msg.actionRecommendation.tab)}
-                      className="w-full py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
+                      onClick={() => setActiveTab('automation')}
+                      className="px-3 py-1.5 rounded-lg bg-[#059669] hover:bg-[#10B981] text-white font-semibold text-[11px] flex items-center gap-1 transition-all cursor-pointer"
                     >
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Execute Recommended Action
+                      Approve Maintenance Work Order <ArrowRight className="w-3 h-3" />
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('predictions')}
+                      className="px-3 py-1.5 rounded-lg bg-[#1A1A1A] hover:bg-[#2E2E2E] text-[#A3A3A3] hover:text-white border border-[#2E2E2E] text-[11px] transition-colors cursor-pointer"
+                    >
+                      View Root Cause Tree
                     </button>
                   </div>
                 )}
@@ -198,35 +185,40 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
           ))}
 
           {isTyping && (
-            <div className="flex gap-3 text-xs">
-              <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 animate-pulse">
-                <Brain className="w-4 h-4" />
+            <div className="flex gap-3 items-center text-xs text-[#A3A3A3]">
+              <div className="w-8 h-8 rounded-xl bg-[#059669] flex items-center justify-center text-white shrink-0 animate-pulse">
+                <StockSphereLogo className="w-5 h-5" color="#FAFAFA" />
               </div>
-              <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800 text-slate-400 italic">
-                SolveX Copilot is consulting 10 department agents...
+              <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#0A0A0A] border border-[#2E2E2E]">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#059669]" />
+                <span>Copilot is inspecting 50+ knowledge graph nodes...</span>
               </div>
             </div>
           )}
         </div>
 
-        {/* Input Bar */}
-        <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex items-center gap-2 pt-3 border-t border-slate-800">
+        {/* Input Controls */}
+        <div className="flex items-center gap-2 pt-4 border-t border-[#2E2E2E]">
           <input
             type="text"
             value={inputQuery}
             onChange={(e) => setInputQuery(e.target.value)}
-            placeholder="Ask anything about enterprise revenue, suppliers, risk, inventory..."
-            className="flex-1 px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            placeholder="Ask Copilot anything (e.g. 'What is the risk score for Q3 sales?')"
+            className="flex-1 px-4 py-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] text-xs text-[#FAFAFA] placeholder-[#A3A3A3]/60 focus:outline-none focus:border-[#059669]"
           />
           <button
-            type="submit"
-            className="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all flex items-center gap-1.5 shadow-lg shadow-blue-600/30 shrink-0"
+            onClick={() => handleSend()}
+            disabled={!inputQuery.trim()}
+            className="px-5 py-3 rounded-xl bg-[#059669] hover:bg-[#10B981] disabled:opacity-50 text-white font-bold text-xs transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-950/40 shrink-0 cursor-pointer"
           >
-            <Send className="w-4 h-4" />
-            <span>Send</span>
+            <span>Ask</span>
+            <Send className="w-3.5 h-3.5" />
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
+
+export default AICopilotWorkspace;
