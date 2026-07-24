@@ -36,7 +36,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#060812] text-slate-100 flex flex-col font-sans selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans selection:bg-red-500 selection:text-white">
       {/* Top Header */}
       <Navbar 
         activeTab={activeTab} 
@@ -70,39 +70,39 @@ export function App() {
           {/* Settings & System Audit Module */}
           {activeTab === 'settings' && (
             <div className="space-y-6 pb-12">
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+              <div className="p-6 rounded-2xl bg-slate-50 border border-black/10 flex items-center justify-between">
                 <div>
-                  <h1 className="text-2xl font-extrabold text-white">System Settings & Audit Logs</h1>
-                  <p className="text-xs text-slate-400 mt-1">Enterprise SSO, API keys, role permissions, and immutable security audit logs.</p>
+                  <h1 className="text-2xl font-extrabold text-slate-900">System Settings & Audit Logs</h1>
+                  <p className="text-xs text-slate-600 mt-1">Enterprise SSO, API keys, role permissions, and immutable security audit logs.</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 text-xs">
-                  <h3 className="font-bold text-sm text-white flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" /> SOC-2 Security & RBAC Configuration
+                <div className="p-5 rounded-2xl bg-slate-50 border border-black/10 space-y-3 text-xs">
+                  <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-red-700" /> SOC-2 Security & RBAC Configuration
                   </h3>
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                    <span className="text-slate-400 text-[10px]">Enterprise SSO Protocol:</span>
-                    <div className="font-semibold text-emerald-400">SAML 2.0 / Okta Active</div>
+                  <div className="p-3 rounded-xl bg-white border border-black/10 space-y-1">
+                    <span className="text-slate-500 text-[10px]">Enterprise SSO Protocol:</span>
+                    <div className="font-semibold text-slate-900">SAML 2.0 / Okta Active</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                    <span className="text-slate-400 text-[10px]">Database Encryption:</span>
-                    <div className="font-semibold text-white">AES-256 at Rest & TLS 1.3 in Transit</div>
+                  <div className="p-3 rounded-xl bg-white border border-black/10 space-y-1">
+                    <span className="text-slate-500 text-[10px]">Database Encryption:</span>
+                    <div className="font-semibold text-slate-900">AES-256 at Rest & TLS 1.3 in Transit</div>
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 text-xs">
-                  <h3 className="font-bold text-sm text-white flex items-center gap-2">
-                    <Database className="w-4 h-4 text-blue-400" /> Database & LLM Engine Config
+                <div className="p-5 rounded-2xl bg-slate-50 border border-black/10 space-y-3 text-xs">
+                  <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                    <Database className="w-4 h-4 text-red-700" /> Database & LLM Engine Config
                   </h3>
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                    <span className="text-slate-400 text-[10px]">Knowledge Graph Engine:</span>
-                    <div className="font-semibold text-cyan-400">Neo4j Enterprise Cluster v5.12</div>
+                  <div className="p-3 rounded-xl bg-white border border-black/10 space-y-1">
+                    <span className="text-slate-500 text-[10px]">Knowledge Graph Engine:</span>
+                    <div className="font-semibold text-slate-900">Neo4j Enterprise Cluster v5.12</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                    <span className="text-slate-400 text-[10px]">Agent Framework:</span>
-                    <div className="font-semibold text-purple-400">LangGraph / CrewAI Hybrid Mesh</div>
+                  <div className="p-3 rounded-xl bg-white border border-black/10 space-y-1">
+                    <span className="text-slate-500 text-[10px]">Agent Framework:</span>
+                    <div className="font-semibold text-slate-900">LangGraph / CrewAI Hybrid Mesh</div>
                   </div>
                 </div>
               </div>
@@ -112,14 +112,14 @@ export function App() {
           {/* Architecture & Documentation Module */}
           {activeTab === 'docs' && (
             <div className="space-y-6 pb-12">
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h1 className="text-2xl font-extrabold text-white">SolveX AI Architecture & Documentation</h1>
-                <p className="text-xs text-slate-400 mt-1">Enterprise Intelligence Operating System technical design specs.</p>
+              <div className="p-6 rounded-2xl bg-slate-50 border border-black/10">
+                <h1 className="text-2xl font-extrabold text-slate-900">SolveX AI Architecture & Documentation</h1>
+                <p className="text-xs text-slate-600 mt-1">Enterprise Intelligence Operating System technical design specs.</p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 text-xs">
-                <h3 className="font-bold text-sm text-white">Core Architectural Innovations</h3>
-                <ul className="list-disc list-inside space-y-2 text-slate-300">
+              <div className="p-6 rounded-2xl bg-slate-50 border border-black/10 space-y-4 text-xs">
+                <h3 className="font-bold text-sm text-slate-900">Core Architectural Innovations</h3>
+                <ul className="list-disc list-inside space-y-2 text-slate-600">
                   <li><strong>Multi-Agent Neural Mesh:</strong> 10 domain-specialized agents (Inventory, Sales, Finance, HR, Production, Supplier, Customer, Logistics, Compliance, Risk) executing cross-departmental debate protocol.</li>
                   <li><strong>Enterprise Digital Twin:</strong> Real-time mathematical simulation matrix predicting revenue, profit margins, machine stress, and delivery SLAs before committing capital.</li>
                   <li><strong>Explainable AI Root Cause Tree:</strong> 100% transparent causality breakdown tracing every anomaly to its underlying systemic origin.</li>
