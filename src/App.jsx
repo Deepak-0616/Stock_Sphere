@@ -11,34 +11,35 @@ import { DepartmentHub } from './components/departments/DepartmentHub';
 import { AutomationQueue } from './components/automation/AutomationQueue';
 import { LandingPage } from './components/landing/LandingPage';
 import { CommandPalette } from './components/common/CommandPalette';
-import { EnterpriseSplash } from './components/auth/EnterpriseSplash';
+import { OpeningStockSplash } from './components/auth/OpeningStockSplash';
 import { AdminLogin } from './components/auth/AdminLogin';
 import { authService } from './services/authService';
 import { ShieldCheck, Database } from 'lucide-react';
 
 export function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [showLanding, setShowLanding] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(() => authService.getCurrentUser());
-  const [showSplash, setShowSplash] = useState(() => {
-    try {
-      return localStorage.getItem('stocksphere_skip_splash') !== 'true';
-    } catch {
-      return true;
-    }
-  });
+  
+  // Swapped States:
+  // Before login: showLandingPageBeforeLogin defaults to true (Product Overview Entrance)
+  const [showLandingPageBeforeLogin, setShowLandingPageBeforeLogin] = useState(true);
+  // After login: showPostLoginStockSplash runs animated STOCKSPHERE stock market loader
+  const [showPostLoginStockSplash, setShowPostLoginStockSplash] = useState(false);
 
   const isAuthenticated = !!currentUser;
 
   const handleLoginSuccess = (user) => {
     setCurrentUser(user);
+    setShowPostLoginStockSplash(true); // Trigger animated STOCKSPHERE stock loader post-login!
   };
 
   const handleLogout = () => {
     authService.logout();
     setCurrentUser(null);
+    setShowLandingPageBeforeLogin(true);
+    setShowPostLoginStockSplash(false);
   };
 
   // Global Ctrl+K listener to open Command Palette
@@ -53,32 +54,34 @@ export function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  if (showLanding) {
-    return <LandingPage onLaunchApp={() => setShowLanding(false)} />;
+  // ─── 1. SWAPPED STEP 1 (BEFORE LOGIN): Product Overview Entrance Landing Page ───
+  if (!isAuthenticated && showLandingPageBeforeLogin) {
+    return <LandingPage onLaunchApp={() => setShowLandingPageBeforeLogin(false)} />;
   }
 
-  // If splash is active, show EnterpriseSplash before Login Page
-  if (showSplash && !isAuthenticated) {
+  // ─── 2. SWAPPED STEP 2 (BEFORE LOGIN): Executive Admin Login Screen ───
+  if (!isAuthenticated) {
     return (
-      <div className="relative min-h-screen bg-[#0A0A0A]">
-        <AdminLogin onLoginSuccess={handleLoginSuccess} />
-        <EnterpriseSplash onComplete={() => setShowSplash(false)} />
-      </div>
+      <AdminLogin 
+        onLoginSuccess={handleLoginSuccess} 
+        onShowSplash={() => setShowLandingPageBeforeLogin(true)}
+      />
     );
   }
 
-  // Admin Login gatekeeper: If not authenticated, require Admin Login
-  if (!isAuthenticated) {
-    return <AdminLogin onLoginSuccess={handleLoginSuccess} />;
+  // ─── 3. SWAPPED STEP 3 (AFTER SIGNING IN): Animated STOCKSPHERE Stock Loader ───
+  if (showPostLoginStockSplash) {
+    return <OpeningStockSplash onComplete={() => setShowPostLoginStockSplash(false)} />;
   }
 
+  // ─── 4. EXECUTIVE DASHBOARD & WORKSPACE TABS ───
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#FAFAFA] flex flex-col font-sans selection:bg-[#059669] selection:text-white">
       {/* Top Header */}
       <Navbar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        onToggleLanding={() => setShowLanding(true)}
+        onToggleLanding={() => setShowPostLoginStockSplash(true)}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onToggleMobileSidebar={() => setIsMobileSidebarOpen(prev => !prev)}
         isMobileSidebarOpen={isMobileSidebarOpen}
@@ -105,6 +108,7 @@ export function App() {
           {activeTab === 'predictions' && <PredictionsRootCause />}
           {activeTab === 'departments' && <DepartmentHub setActiveTab={setActiveTab} />}
           {activeTab === 'automation' && <AutomationQueue />}
+          {activeTab === 'landing' && <LandingPage onLaunchApp={() => setActiveTab('dashboard')} />}
 
           {/* Settings & System Audit Module */}
           {activeTab === 'settings' && (
@@ -179,4 +183,5 @@ export function App() {
     </div>
   );
 }
+
 export default App;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   LayoutDashboard, 
   Bot, 
@@ -12,6 +11,7 @@ import {
   Cpu, 
   HelpCircle,
   ShieldCheck,
+  Sparkles,
   X
 } from 'lucide-react';
 
@@ -74,6 +74,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isMobileOpen, onCloseMobile }
   ];
 
   const secondaryNav = [
+    { id: 'landing', label: 'Product Overview', icon: Sparkles },
     { id: 'settings', label: 'Settings & Audit Logs', icon: Settings },
     { id: 'docs', label: 'Architecture & Docs', icon: HelpCircle }
   ];
