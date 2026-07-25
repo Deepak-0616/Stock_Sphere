@@ -125,7 +125,7 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
           <div className="flex flex-wrap items-center gap-2 mb-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#059669]/15 border border-[#059669]/40 text-xs font-semibold text-[#10B981]">
               <Sparkles className="w-3.5 h-3.5" /> 
-              <span>{apiKey ? 'Real AI Engine: Gemini 2.5 Flash' : 'Real AI Engine: StockSphere Domain RAG'}</span>
+              <span>{apiKey ? 'Real AI Engine: Gemini 2.5 Flash' : 'Real AI Engine: Groq Llama 3.3 70B (Express Backend)'}</span>
             </div>
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3B82F6]/15 border border-[#3B82F6]/40 text-xs font-semibold text-[#60A5FA]">

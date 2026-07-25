@@ -8,6 +8,7 @@ import {
   KNOWLEDGE_GRAPH_NODES, 
   MULTI_AGENT_DEBATE_DEMO 
 } from '../data/mockEnterpriseData';
+import { ApiClient } from './api';
 
 // API Key Storage Key
 const GEMINI_API_KEY_STORAGE = 'stocksphere_gemini_api_key';
@@ -121,8 +122,18 @@ Provide clear, analytical, and actionable enterprise responses with markdown for
     return true;
   }
 
-  // Process Query via Google Gemini API or Fallback Domain Engine
+  // Process Query via Groq Backend API or Fallback Domain Engine
   static async queryAI(query) {
+    // 1. Try sending to Express Backend API powered by Groq Llama 3.3 70B
+    try {
+      const backendResponse = await ApiClient.sendChatQuery(query);
+      if (backendResponse && backendResponse.text) {
+        return backendResponse;
+      }
+    } catch (backendErr) {
+      console.warn('Backend server query failed, trying client-side fallback:', backendErr.message);
+    }
+
     const apiKey = this.getApiKey();
 
     // 1. Client-Side Domain Restriction Check
