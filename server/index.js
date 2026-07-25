@@ -354,7 +354,70 @@ app.get('/api/approvals', (req, res) => {
   });
 });
 
-// 10. Approve/Reject Action API
+// 10. Generate AI Workflow Proposal via Groq
+app.post('/api/approvals/generate', async (req, res) => {
+  try {
+    const { topic } = req.body;
+    const promptTopic = topic || 'Emergency procurement or machine preventative maintenance';
+
+    const systemPrompt = `You are StockSphere AI Workflow Orchestrator. 
+Generate a realistic high-value enterprise executive approval proposal for the topic: "${promptTopic}".
+Return ONLY a valid JSON object matching this schema (no markdown, no code blocks):
+{
+  "title": "Actionable proposal title (e.g. Authorize Air Freight for Component X)",
+  "dept": "Department Name (Procurement / Manufacturing / Finance / Logistics)",
+  "requestedBy": "Agent Name (e.g. Inventory Agent + Supplier Agent)",
+  "impact": "Quantifiable ROI impact (e.g. +$45,000 Saved)",
+  "cost": "Estimated Cost (e.g. $12,400)",
+  "priority": "CRITICAL or HIGH or MEDIUM",
+  "summary": "Detailed 2-sentence rationale for this executive decision order."
+}`;
+
+    const rawResponse = await callGroqAPI([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: `Generate proposal for: ${promptTopic}` }
+    ]);
+
+    let parsed;
+    try {
+      const cleanJson = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+      parsed = JSON.parse(cleanJson);
+    } catch (err) {
+      parsed = {
+        title: `Authorize Operational Resolution for ${promptTopic.slice(0, 30)}`,
+        dept: 'Procurement & Supply Chain',
+        requestedBy: 'Inventory Agent + Production Agent',
+        impact: '+$35,000 Net Margin Saved',
+        cost: '$8,500',
+        priority: 'HIGH',
+        summary: `Execute preventative operational workflow for ${promptTopic} to eliminate lead time bottlenecks and protect ARR.`
+      };
+    }
+
+    const newApproval = {
+      id: `app-${Date.now()}`,
+      title: parsed.title,
+      dept: parsed.dept,
+      requestedBy: parsed.requestedBy,
+      impact: parsed.impact,
+      cost: parsed.cost,
+      priority: parsed.priority || 'HIGH',
+      summary: parsed.summary,
+      status: 'pending',
+      timestamp: new Date().toISOString()
+    };
+
+    const currentData = db.read();
+    currentData.approvals.unshift(newApproval);
+    db.write(currentData);
+
+    res.json({ message: 'Workflow proposal generated & queued', item: newApproval });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to generate workflow proposal', details: err.message });
+  }
+});
+
+// 11. Approve/Reject Action API
 app.post('/api/approvals/:id', (req, res) => {
   const { id } = req.params;
   const { status } = req.body; // 'approved' or 'rejected'

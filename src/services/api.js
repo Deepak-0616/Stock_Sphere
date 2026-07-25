@@ -96,5 +96,15 @@ export const ApiClient = {
       body: JSON.stringify({ status })
     });
     return await res.json();
+  },
+
+  // Generate dynamic AI workflow proposal via Groq
+  async generateWorkflowProposal(topic) {
+    const res = await fetch(`${BASE_URL}/approvals/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic })
+    });
+    return await res.json();
   }
 };
