@@ -55,63 +55,63 @@ export const CommandCenter = ({ setActiveTab }) => {
           {/* Key Metrics Strip with Tooltips */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
             {/* Metric 1 */}
-            <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1">
+            <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-[#A3A3A3]">Annual Revenue</span>
+                <span className="text-[10px] uppercase font-bold text-[#A3A3A3] truncate">Annual Revenue</span>
                 <HelpTooltip 
                   title="Annual Recurring Revenue (ARR)" 
                   explanation="Current total normalized yearly revenue across all sales channels."
-                  example="₹42.8 Cr is trending up by +14.2% YoY."
+                  example="₹42.85 Cr is trending up by +14.8% YoY."
                 />
               </div>
-              <div className="text-base font-extrabold text-[#FAFAFA]">{ENTERPRISE_METRICS.revenue}</div>
-              <div className="text-[10px] font-semibold text-[#10B981] flex items-center gap-0.5">
-                <ArrowUpRight className="w-3 h-3" /> {ENTERPRISE_METRICS.revenueGrowth} YoY
+              <div className="text-sm sm:text-base font-extrabold text-[#FAFAFA] truncate tracking-tight">{ENTERPRISE_METRICS.revenue}</div>
+              <div className="text-[10px] font-semibold text-[#10B981] flex items-center gap-0.5 truncate">
+                <ArrowUpRight className="w-3 h-3 shrink-0" /> {ENTERPRISE_METRICS.revenueGrowth} YoY
               </div>
             </div>
 
             {/* Metric 2 */}
-            <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1">
+            <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-[#A3A3A3]">Net Profit</span>
+                <span className="text-[10px] uppercase font-bold text-[#A3A3A3] truncate">Net Profit</span>
                 <HelpTooltip 
                   title="Net Profit Margin" 
                   explanation="The percentage of revenue retained as profit after all production, logistics, and operational costs."
-                  example="24.6% margin with +3.8% growth due to automated cost savings."
+                  example="24.2% margin with +2.1% growth due to automated cost savings."
                 />
               </div>
-              <div className="text-base font-extrabold text-[#FAFAFA]">{ENTERPRISE_METRICS.profitMargin}</div>
-              <div className="text-[10px] font-semibold text-[#10B981] flex items-center gap-0.5">
-                <ArrowUpRight className="w-3 h-3" /> {ENTERPRISE_METRICS.profitGrowth} margin
+              <div className="text-sm sm:text-base font-extrabold text-[#FAFAFA] truncate tracking-tight">{ENTERPRISE_METRICS.profitMargin}</div>
+              <div className="text-[10px] font-semibold text-[#10B981] flex items-center gap-0.5 truncate">
+                <ArrowUpRight className="w-3 h-3 shrink-0" /> {ENTERPRISE_METRICS.profitGrowth} margin
               </div>
             </div>
 
             {/* Metric 3 */}
-            <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1">
+            <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-[#A3A3A3]">Monthly AI Savings</span>
+                <span className="text-[10px] uppercase font-bold text-[#A3A3A3] truncate">Monthly AI Savings</span>
                 <HelpTooltip 
                   title="Monthly AI Cost Prevention" 
                   explanation="Direct financial savings captured by automated AI actions (preventing delayed shipments, avoiding machine breakdowns, early payment discounts)."
-                  example="₹18,40,000 saved this month across 1,420 automated ops."
+                  example="₹1.25 Cr saved this month across 142 automated ops."
                 />
               </div>
-              <div className="text-base font-extrabold text-[#10B981]">{ENTERPRISE_METRICS.costSavedThisMonth}</div>
-              <div className="text-[10px] text-[#A3A3A3]">{ENTERPRISE_METRICS.automatedActionsToday} automated ops</div>
+              <div className="text-sm sm:text-base font-extrabold text-[#10B981] truncate tracking-tight">{ENTERPRISE_METRICS.costSavedThisMonth}</div>
+              <div className="text-[10px] text-[#A3A3A3] truncate">{ENTERPRISE_METRICS.automatedActionsToday} automated ops</div>
             </div>
 
             {/* Metric 4 */}
-            <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1">
+            <div className="p-3 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] space-y-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-[#A3A3A3]">AI Confidence</span>
+                <span className="text-[10px] uppercase font-bold text-[#A3A3A3] truncate">AI Confidence</span>
                 <HelpTooltip 
                   title="AI Decision Confidence" 
                   explanation="The statistical reliability score calculated from knowledge graph validation and past outcome data."
-                  example="96.4% confidence means high precision decisions with zero hallucinations."
+                  example="94.6% confidence means high precision decisions with zero hallucinations."
                 />
               </div>
-              <div className="text-base font-extrabold text-[#84CC16]">{ENTERPRISE_METRICS.decisionConfidenceAvg}</div>
-              <div className="text-[10px] font-semibold text-[#10B981]">Verified Precision</div>
+              <div className="text-sm sm:text-base font-extrabold text-[#84CC16] truncate tracking-tight">{ENTERPRISE_METRICS.decisionConfidenceAvg}</div>
+              <div className="text-[10px] font-semibold text-[#10B981] truncate">Verified Precision</div>
             </div>
           </div>
         </div>

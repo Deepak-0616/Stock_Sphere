@@ -3,14 +3,14 @@
 export const ENTERPRISE_METRICS = {
   healthScore: 88,
   healthScoreDelta: '+4.2% vs last week',
-  revenue: '₹42,85,00,000',
+  revenue: '₹42.85 Cr',
   revenueGrowth: '+14.8%',
   profitMargin: '24.2%',
   profitGrowth: '+2.1%',
   riskLevel: 'MODERATE',
   activeAlerts: 4,
   automatedActionsToday: 142,
-  costSavedThisMonth: '₹1,24,50,000',
+  costSavedThisMonth: '₹1.25 Cr',
   decisionConfidenceAvg: '94.6%'
 };
 
