@@ -37,7 +37,7 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
     {
       id: 1,
       sender: 'ai',
-      text: "Hello! I am the StockSphere Real Enterprise AI Copilot. I have direct access to live telemetry, 10 department agents, and knowledge graphs.\n\n🔒 **Domain Guardrail Active**: I can answer any question related to StockSphere, supply chain, inventory, manufacturing, logistics, and enterprise finance. Outer questions outside this domain are restricted.",
+      text: "Hello! I am the StockSphere Real Enterprise AI Chatbot. I have direct access to live telemetry, 10 department agents, and knowledge graphs.\n\n🔒 **Domain Guardrail Active**: I can answer any question related to StockSphere, supply chain, inventory, manufacturing, logistics, and enterprise finance. Outer questions outside this domain are restricted.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       provider: apiKey ? 'Google Gemini AI' : 'StockSphere Domain AI',
       quickPrompts: [
@@ -135,7 +135,7 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
           </div>
 
           <h1 className="text-2xl font-extrabold text-[#FAFAFA] tracking-tight flex items-center gap-2">
-            StockSphere Real AI Copilot
+            StockSphere Real AI Chatbot
           </h1>
           <p className="text-xs text-[#A3A3A3] mt-1">
             Answers any project & domain question using real-time enterprise telemetry. Restricts off-topic / outer requests.

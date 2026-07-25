@@ -12,7 +12,7 @@ SolveX AI is an **Enterprise Intelligence Operating System** powered by a Multi-
 * **Enterprise Knowledge Graph**: Interactive 50+ node ontology mapping relationships across departments, suppliers, facilities, machines, workforce, and active client orders.
 * **Digital Twin & Decision Simulator**: Virtual enterprise model allowing executives to simulate "What happens if production increases by 30%?" with real-time math-backed projections for revenue, profit margin, employee stress, machine OEE, delivery delay, carbon footprint, and ROI.
 * **Predictions & Root Cause Engine**: Explainable AI causality breakdown tracing every anomaly to its underlying systemic origin ("What happened", "Why", "Who caused it", "Financial Impact", "Mitigation").
-* **AI Business Copilot**: Natural language executive chat assistant providing inline charts, data tables, node highlights, and 1-click execution triggers.
+* **AI Business Chatbot**: Natural language executive chat assistant providing inline charts, data tables, node highlights, and 1-click execution triggers.
 * **Command Center Dashboard**: Executive cockpit with global Enterprise Health Score (88/100), live department health cards, real-time risk alert ticker, and decision audit logs.
 * **Autonomous Workflow & Approval Queue**: Routine actions run automatically; high-value critical operations prompt 1-click manager authorization.
 

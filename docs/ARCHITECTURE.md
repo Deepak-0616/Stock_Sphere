@@ -23,7 +23,7 @@ graph TD
 
     subgraph Presentation ["Enterprise SaaS Web Layer"]
       COMMAND_CENTER["Command Center Dashboard"]
-      COPILOT["AI Business Copilot"]
+      COPILOT["AI Business Chatbot"]
       SIMULATOR["Decision Simulator"]
       APPROVALS["1-Click Approval Queue"]
     end

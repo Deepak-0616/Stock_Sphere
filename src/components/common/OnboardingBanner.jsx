@@ -46,7 +46,7 @@ export const OnboardingBanner = ({ setActiveTab }) => {
             How StockSphere Autonomous Intelligence Works
           </h2>
           <p className="text-xs text-[#A3A3A3] leading-relaxed">
-            StockSphere acts as your enterprise's central nervous system. Select any action below or ask questions in plain English via the AI Copilot.
+            StockSphere acts as your enterprise's central nervous system. Select any action below or ask questions in plain English via the AI Chatbot.
           </p>
         </div>
 
@@ -57,7 +57,7 @@ export const OnboardingBanner = ({ setActiveTab }) => {
             className="px-3.5 py-2 rounded-xl bg-[#059669] hover:bg-[#10B981] text-white font-bold text-xs shadow-lg shadow-emerald-950/40 transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Bot className="w-4 h-4" />
-            <span>Ask AI Copilot</span>
+            <span>Ask AI Chatbot</span>
           </button>
 
           <button

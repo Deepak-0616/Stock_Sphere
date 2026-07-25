@@ -406,7 +406,7 @@ export const EnterpriseKnowledgeGraph = ({ setActiveTab }) => {
                     onClick={() => setActiveTab('copilot')}
                     className="p-2 rounded-lg bg-[#0A0A0A] hover:bg-[#2E2E2E] text-[#A3A3A3] hover:text-[#FAFAFA] border border-[#2E2E2E] text-center transition-all cursor-pointer"
                   >
-                    Ask AI Copilot →
+                    Ask AI Chatbot →
                   </button>
                 </div>
               )}

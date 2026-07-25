@@ -34,7 +34,7 @@ export const CommandPalette = ({ isOpen, onClose, setActiveTab }) => {
 
   const actions = [
     { id: 'dashboard', label: 'Command Center', icon: LayoutDashboard, category: 'View', desc: 'Real-time enterprise overview & metrics' },
-    { id: 'copilot', label: 'Ask AI Copilot', icon: Bot, category: 'AI Assistant', desc: 'Natural language executive decision assistant' },
+    { id: 'copilot', label: 'Ask AI Chatbot', icon: Bot, category: 'AI Assistant', desc: 'Natural language executive decision assistant' },
     { id: 'agents', label: 'Multi-Agent Mesh', icon: Cpu, category: 'Agents', desc: '10 domain agents debating live operational risks' },
     { id: 'graph', label: 'Enterprise Knowledge Graph', icon: Network, category: 'Data', desc: 'Interactive node topology of enterprise entities' },
     { id: 'simulator', label: 'Digital Twin Simulator', icon: Layers, category: 'Simulation', desc: 'Run what-if scenario predictions' },
@@ -80,7 +80,7 @@ export const CommandPalette = ({ isOpen, onClose, setActiveTab }) => {
         <div className="max-h-80 overflow-y-auto p-2 space-y-1">
           {filtered.length === 0 ? (
             <div className="p-8 text-center text-xs text-[#A3A3A3]">
-              No matching commands. Ask the <button onClick={() => handleSelect('copilot')} className="text-[#10B981] underline font-semibold cursor-pointer">AI Copilot</button> directly!
+              No matching commands. Ask the <button onClick={() => handleSelect('copilot')} className="text-[#10B981] underline font-semibold cursor-pointer">AI Chatbot</button> directly!
             </div>
           ) : (
             filtered.map((item) => {

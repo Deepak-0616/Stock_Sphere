@@ -26,7 +26,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isMobileOpen, onCloseMobile }
     },
     { 
       id: 'copilot', 
-      label: 'AI Business Copilot', 
+      label: 'AI Business Chatbot', 
       subLabel: 'Ask Questions in Plain English',
       icon: Bot, 
       highlight: true 
