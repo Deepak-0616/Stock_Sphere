@@ -21,11 +21,16 @@ export const Navbar = ({
   onToggleMobileSidebar,
   isMobileSidebarOpen,
   currentUser,
-  onLogout
+  onLogout,
+  pendingApprovalsCount = 0
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [selectedRole, setSelectedRole] = useState(currentUser?.role || 'Chief Operating Officer (Executive)');
+
+  // Dynamic notifications count calculation (3 system alerts + pending approvals count)
+  const systemAlertsCount = 3;
+  const totalNotificationCount = systemAlertsCount + pendingApprovalsCount;
 
   return (
     <header className="h-16 border-b border-[#2E2E2E] bg-[#0A0A0A]/95 backdrop-blur-md sticky top-0 z-40 px-4 md:px-6 flex items-center justify-between">
@@ -71,16 +76,18 @@ export const Navbar = ({
         </div>
       </div>
 
-      {/* Live Risk Alert Ticker */}
+      {/* Live Risk Alert Ticker (Horizontal Bar) */}
       <div className="hidden md:flex items-center gap-2 max-w-md bg-[#059669]/10 border border-[#059669]/30 rounded-full px-3.5 py-1 text-xs text-emerald-200">
         <ShieldAlert className="w-4 h-4 text-[#059669] shrink-0" />
-        <span className="truncate font-medium">Alert: CNC Unit #4 Spindle & Microchip Stock</span>
+        <span className="truncate font-medium">
+          Alerts ({totalNotificationCount}): CNC Unit #4, Microchip Stock & {pendingApprovalsCount} Pending Orders
+        </span>
         <button 
-          onClick={() => setActiveTab('predictions')} 
+          onClick={() => setActiveTab('automation')} 
           className="underline font-bold text-[#10B981] hover:text-emerald-300 shrink-0"
-          title="Click to view root cause analysis"
+          title="Click to view action queue"
         >
-          View Solution
+          View Queue
         </button>
       </div>
 
@@ -115,18 +122,36 @@ export const Navbar = ({
             title="View live AI alerts"
           >
             <Bell className="w-4 h-4 text-[#059669]" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#059669] text-[10px] font-bold text-white flex items-center justify-center">
-              4
-            </span>
+            {totalNotificationCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#059669] text-[10px] font-bold text-white flex items-center justify-center">
+                {totalNotificationCount}
+              </span>
+            )}
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-[#1A1A1A] border border-[#2E2E2E] rounded-2xl shadow-2xl shadow-black/90 p-3 z-50">
+            <div className="absolute right-0 mt-2 w-84 bg-[#1A1A1A] border border-[#2E2E2E] rounded-2xl shadow-2xl shadow-black/90 p-3 z-50">
               <div className="flex items-center justify-between pb-2 border-b border-[#2E2E2E]">
-                <span className="font-bold text-sm text-[#FAFAFA]">Enterprise AI Alerts</span>
-                <span className="text-[10px] bg-[#059669]/20 text-[#10B981] px-2 py-0.5 rounded font-mono border border-[#059669]/40">4 Unread</span>
+                <span className="font-bold text-sm text-[#FAFAFA]">Enterprise AI Notifications</span>
+                <span className="text-[10px] bg-[#059669]/20 text-[#10B981] px-2 py-0.5 rounded font-mono border border-[#059669]/40">
+                  {totalNotificationCount} Unread
+                </span>
               </div>
-              <div className="space-y-2 mt-2 max-h-64 overflow-y-auto text-xs text-[#A3A3A3]">
+              <div className="space-y-2 mt-2 max-h-72 overflow-y-auto text-xs text-[#A3A3A3]">
+                {pendingApprovalsCount > 0 && (
+                  <div 
+                    onClick={() => { setActiveTab('automation'); setShowNotifications(false); }}
+                    className="p-2.5 rounded-xl bg-[#059669]/10 border border-[#059669]/40 hover:bg-[#059669]/20 cursor-pointer"
+                  >
+                    <div className="font-bold text-[#10B981] flex items-center justify-between">
+                      <span>Executive Approvals Pending</span>
+                      <span className="text-[10px] bg-[#059669] text-white px-1.5 py-0.5 rounded-full font-mono">{pendingApprovalsCount}</span>
+                    </div>
+                    <p className="text-[#FAFAFA] mt-0.5 font-medium">{pendingApprovalsCount} high-priority action orders require authorization.</p>
+                    <span className="text-[10px] text-[#10B981] mt-1 block font-bold">Review Approval Queue →</span>
+                  </div>
+                )}
+
                 <div 
                   onClick={() => { setActiveTab('predictions'); setShowNotifications(false); }}
                   className="p-2.5 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] hover:border-[#059669]/40 cursor-pointer"
@@ -135,13 +160,23 @@ export const Navbar = ({
                   <p className="text-[#A3A3A3] mt-0.5">Vibration score 8.4mm/s. 84% failure probability within 72 hrs.</p>
                   <span className="text-[10px] text-[#059669] mt-1 block">Click to view fix →</span>
                 </div>
+
                 <div 
                   onClick={() => { setActiveTab('automation'); setShowNotifications(false); }}
                   className="p-2.5 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] hover:border-[#059669]/40 cursor-pointer"
                 >
                   <div className="font-semibold text-[#FAFAFA]">Microchip X402 Depletion Alert</div>
-                  <p className="text-[#A3A3A3] mt-0.5">Only 120 units remaining in Warehouse West-3.</p>
+                  <p className="text-[#A3A3A3] mt-0.5">Stock level below safety threshold in West-3.</p>
                   <span className="text-[10px] text-[#059669] mt-1 block">Click to approve purchase order →</span>
+                </div>
+
+                <div 
+                  onClick={() => { setActiveTab('simulator'); setShowNotifications(false); }}
+                  className="p-2.5 rounded-xl bg-[#0A0A0A] border border-[#2E2E2E] hover:border-[#059669]/40 cursor-pointer"
+                >
+                  <div className="font-semibold text-[#FAFAFA]">NH-48 Monsoon Freight Delay</div>
+                  <p className="text-[#A3A3A3] mt-0.5">3 container shipments delayed on western transit corridor.</p>
+                  <span className="text-[10px] text-[#059669] mt-1 block">Simulate reroute impact →</span>
                 </div>
               </div>
             </div>

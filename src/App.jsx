@@ -14,6 +14,7 @@ import { CommandPalette } from './components/common/CommandPalette';
 import { OpeningStockSplash } from './components/auth/OpeningStockSplash';
 import { AdminLogin } from './components/auth/AdminLogin';
 import { authService } from './services/authService';
+import { ApiClient } from './services/api';
 import { ShieldCheck, Database } from 'lucide-react';
 
 export function App() {
@@ -21,6 +22,26 @@ export function App() {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(() => authService.getCurrentUser());
+  const [pendingApprovalsCount, setPendingApprovalsCount] = useState(4);
+
+  // Poll backend for real-time pending approvals count sync
+  useEffect(() => {
+    const fetchPendingCount = async () => {
+      try {
+        const data = await ApiClient.getApprovals();
+        if (data && data.approvals) {
+          const pending = data.approvals.filter(a => a.status === 'pending');
+          setPendingApprovalsCount(pending.length);
+        }
+      } catch (err) {
+        // Silently keep current count on connection lag
+      }
+    };
+
+    fetchPendingCount();
+    const interval = setInterval(fetchPendingCount, 3000);
+    return () => clearInterval(interval);
+  }, []);
   
   // Swapped States:
   // Before login: showLandingPageBeforeLogin defaults to true (Product Overview Entrance)
@@ -87,6 +108,7 @@ export function App() {
         isMobileSidebarOpen={isMobileSidebarOpen}
         currentUser={currentUser}
         onLogout={handleLogout}
+        pendingApprovalsCount={pendingApprovalsCount}
       />
 
       <div className="flex-1 flex overflow-hidden">
@@ -96,6 +118,7 @@ export function App() {
           setActiveTab={setActiveTab} 
           isMobileOpen={isMobileSidebarOpen}
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
+          pendingApprovalsCount={pendingApprovalsCount}
         />
 
         {/* Main Content Workspace */}

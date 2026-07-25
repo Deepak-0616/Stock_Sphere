@@ -14,7 +14,7 @@ import {
   X
 } from 'lucide-react';
 
-export const Sidebar = ({ activeTab, setActiveTab, isMobileOpen, onCloseMobile }) => {
+export const Sidebar = ({ activeTab, setActiveTab, isMobileOpen, onCloseMobile, pendingApprovalsCount = 0 }) => {
   const mainNav = [
     { 
       id: 'dashboard', 
@@ -68,7 +68,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isMobileOpen, onCloseMobile }
       label: 'Automation & Approvals', 
       subLabel: '1-Click Decision Queue',
       icon: CheckSquare, 
-      count: 3 
+      count: pendingApprovalsCount > 0 ? pendingApprovalsCount : null 
     }
   ];
 
