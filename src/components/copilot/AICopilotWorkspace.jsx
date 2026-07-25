@@ -317,11 +317,11 @@ export const AICopilotWorkspace = ({ setActiveTab }) => {
             </button>
           </div>
 
-          <div className="flex items-center justify-between text-[11px] text-[#A3A3A3] px-1">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] text-[#A3A3A3] px-1 gap-1">
             <span>
               💡 Try asking about <strong>Inventory</strong>, <strong>CNC Telemetry</strong>, <strong>Suppliers</strong>, or <strong>Logistics</strong>.
             </span>
-            <span className="text-emerald-400 font-medium flex items-center gap-1">
+            <span className="text-emerald-400 font-medium flex items-center gap-1 shrink-0">
               <ShieldCheck className="w-3.5 h-3.5" /> Domain Restrictions Active
             </span>
           </div>

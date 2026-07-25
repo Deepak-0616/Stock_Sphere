@@ -122,7 +122,7 @@ export function App() {
         />
 
         {/* Main Content Workspace */}
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto h-[calc(100vh-4rem)] max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto overflow-x-hidden h-[calc(100vh-4rem)] max-w-7xl mx-auto w-full">
           {activeTab === 'dashboard' && <CommandCenter setActiveTab={setActiveTab} />}
           {activeTab === 'copilot' && <AICopilotWorkspace setActiveTab={setActiveTab} />}
           {activeTab === 'agents' && <MultiAgentHub setActiveTab={setActiveTab} />}
