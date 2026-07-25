@@ -56,6 +56,16 @@ export const ApiClient = {
     return await res.json();
   },
 
+  // 1-on-1 Chat with specific agent
+  async chatWithAgent(agentId, agentName, agentDept, prompt) {
+    const res = await fetch(`${BASE_URL}/agents/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ agentId, agentName, agentDept, prompt })
+    });
+    return await res.json();
+  },
+
   // Run Digital Twin Scenario Simulation
   async runSimulation(params) {
     const res = await fetch(`${BASE_URL}/simulate`, {
