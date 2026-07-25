@@ -33,39 +33,39 @@ export const Navbar = ({
   const totalNotificationCount = systemAlertsCount + pendingApprovalsCount;
 
   return (
-    <header className="h-16 border-b border-[#2E2E2E] bg-[#0A0A0A]/95 backdrop-blur-md sticky top-0 z-40 px-4 md:px-6 flex items-center justify-between">
-      {/* Left: Mobile Toggle & Brand */}
-      <div className="flex items-center gap-3">
+    <header className="h-16 border-b border-[#2E2E2E] bg-[#0A0A0A]/95 backdrop-blur-md sticky top-0 z-40 px-4 md:px-6 flex items-center justify-between gap-4 w-full">
+      {/* Left: Mobile Toggle & Brand & Enterprise Health */}
+      <div className="flex items-center gap-3 shrink-0">
         {/* Mobile Hamburger Toggle */}
         <button
           onClick={onToggleMobileSidebar}
-          className="md:hidden p-2 rounded-lg text-[#FAFAFA] hover:text-[#059669] hover:bg-[#1A1A1A] border border-[#2E2E2E]"
+          className="md:hidden h-9 w-9 flex items-center justify-center rounded-xl text-[#FAFAFA] hover:text-[#059669] hover:bg-[#1A1A1A] border border-[#2E2E2E] cursor-pointer"
           title="Toggle Navigation Menu"
         >
-          {isMobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {isMobileSidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
         </button>
 
         <div 
           className="flex items-center gap-2.5 cursor-pointer group"
           onClick={() => setActiveTab('dashboard')}
         >
-          <div className="w-10 h-10 rounded-xl bg-[#1A1A1A] border border-[#2E2E2E] flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-            <StockSphereLogo className="w-6 h-6" color="#059669" />
+          <div className="w-9 h-9 rounded-xl bg-[#1A1A1A] border border-[#2E2E2E] flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+            <StockSphereLogo className="w-5 h-5" color="#059669" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-xl tracking-tight text-[#FAFAFA]">StockSphere</span>
-              <span className="text-xs px-1.5 py-0.5 rounded bg-[#059669]/15 text-[#10B981] font-mono font-semibold border border-[#059669]/40">AI</span>
+              <span className="font-extrabold text-lg tracking-tight text-[#FAFAFA]">StockSphere</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#059669]/15 text-[#10B981] font-mono font-semibold border border-[#059669]/40">AI</span>
             </div>
             <p className="text-[10px] text-[#A3A3A3] font-medium tracking-wide hidden sm:block">Enterprise OS</p>
           </div>
         </div>
 
         {/* Global Enterprise Health Badge with Tooltip */}
-        <div className="hidden lg:flex items-center gap-2 ml-6 px-3 py-1.5 rounded-full bg-[#1A1A1A] border border-[#2E2E2E]">
+        <div className="hidden xl:flex items-center gap-2 ml-4 px-3.5 h-9 rounded-xl bg-[#1A1A1A] border border-[#2E2E2E]">
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-[#059669]" />
-            <span className="text-xs text-[#A3A3A3]">Enterprise Health:</span>
+            <div className="w-2 h-2 rounded-full bg-[#059669] animate-pulse" />
+            <span className="text-xs text-[#A3A3A3]">Health Score:</span>
             <span className="text-xs font-bold text-[#059669]">{ENTERPRISE_METRICS.healthScore}/100</span>
           </div>
           <HelpTooltip 
@@ -76,27 +76,27 @@ export const Navbar = ({
         </div>
       </div>
 
-      {/* Live Risk Alert Ticker (Horizontal Bar) */}
-      <div className="hidden md:flex items-center gap-2 max-w-md bg-[#059669]/10 border border-[#059669]/30 rounded-full px-3.5 py-1 text-xs text-emerald-200">
+      {/* Center: Live Risk Alert Ticker (Evenly Placed Horizontal Bar) */}
+      <div className="hidden md:flex items-center justify-center gap-2.5 px-4 h-9 rounded-full bg-[#059669]/10 border border-[#059669]/30 text-xs text-emerald-200 flex-1 max-w-lg mx-auto shadow-sm shadow-emerald-950/20 shrink-0">
         <ShieldAlert className="w-4 h-4 text-[#059669] shrink-0" />
         <span className="truncate font-medium">
-          Alerts ({totalNotificationCount}): CNC Unit #4, Microchip Stock & {pendingApprovalsCount} Pending Orders
+          Alerts ({totalNotificationCount}): CNC Unit #4 Spindle & Microchip Stock ({pendingApprovalsCount} Pending Orders)
         </span>
         <button 
           onClick={() => setActiveTab('automation')} 
-          className="underline font-bold text-[#10B981] hover:text-emerald-300 shrink-0"
+          className="px-2.5 py-0.5 rounded-full bg-[#059669]/20 hover:bg-[#059669]/30 text-[#10B981] hover:text-white text-[11px] font-bold border border-[#059669]/40 transition-colors shrink-0 cursor-pointer"
           title="Click to view action queue"
         >
-          View Queue
+          View Queue →
         </button>
       </div>
 
-      {/* Right Controls */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      {/* Right: Action Controls */}
+      <div className="flex items-center gap-2.5 shrink-0">
         {/* Landing Page Toggle */}
         <button
           onClick={onToggleLanding}
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1A1A1A] text-[#A3A3A3] hover:text-[#FAFAFA] border border-[#2E2E2E] hover:border-[#059669]/50 text-xs font-semibold transition-all cursor-pointer"
+          className="hidden lg:flex items-center gap-1.5 h-9 px-3.5 rounded-xl bg-[#1A1A1A] text-[#A3A3A3] hover:text-[#FAFAFA] border border-[#2E2E2E] hover:border-[#059669]/50 text-xs font-semibold transition-all cursor-pointer"
           title="Switch to product pitch & overview landing page"
         >
           <Sparkles className="w-3.5 h-3.5 text-[#059669]" />
@@ -106,11 +106,11 @@ export const Navbar = ({
         {/* Search / Command Palette Trigger */}
         <button 
           onClick={onOpenCommandPalette}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1A1A1A] border border-[#2E2E2E] text-[#A3A3A3] hover:text-[#FAFAFA] hover:border-[#059669]/50 text-xs transition-all cursor-pointer"
+          className="flex items-center gap-2 h-9 px-3.5 rounded-xl bg-[#1A1A1A] border border-[#2E2E2E] text-[#A3A3A3] hover:text-[#FAFAFA] hover:border-[#059669]/50 text-xs transition-all cursor-pointer"
           title="Open Quick Search & Command Palette (Ctrl+K)"
         >
           <Search className="w-3.5 h-3.5 text-[#059669]" />
-          <span className="hidden sm:inline">Search / Cmd Palette</span>
+          <span className="hidden sm:inline">Search</span>
           <kbd className="hidden sm:inline-block text-[10px] bg-[#0A0A0A] px-1.5 py-0.5 rounded text-[#10B981] font-mono border border-[#2E2E2E]">Ctrl+K</kbd>
         </button>
 
@@ -118,12 +118,12 @@ export const Navbar = ({
         <div className="relative">
           <button 
             onClick={() => setShowNotifications(!showNotifications)}
-            className="w-9 h-9 rounded-lg bg-[#1A1A1A] border border-[#2E2E2E] flex items-center justify-center text-[#A3A3A3] hover:text-[#FAFAFA] hover:border-[#059669]/50 transition-all cursor-pointer relative"
+            className="w-9 h-9 rounded-xl bg-[#1A1A1A] border border-[#2E2E2E] flex items-center justify-center text-[#A3A3A3] hover:text-[#FAFAFA] hover:border-[#059669]/50 transition-all cursor-pointer relative"
             title="View live AI alerts"
           >
             <Bell className="w-4 h-4 text-[#059669]" />
             {totalNotificationCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#059669] text-[10px] font-bold text-white flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#059669] text-[10px] font-bold text-white flex items-center justify-center shadow-md">
                 {totalNotificationCount}
               </span>
             )}
